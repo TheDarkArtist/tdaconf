@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Clean package cache
+sudo pacman -Scc --noconfirm
+
+# Remove orphaned packages
+sudo pacman -Rns $(pacman -Qdtq) --noconfirm
+
+# Clean temporary files
+sudo rm -rf /tmp/*
+
+# Clean journal logs
+sudo journalctl --vacuum-size=100M
+
+# Clean cached AUR packages (if you use an AUR helper like yay)
+yay -Sc --noconfirm

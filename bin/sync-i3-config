@@ -1,0 +1,23 @@
+#!/bin/bash
+
+REPO_DIR="$HOME/Workspace/tda/repos/tda-i3-config/"
+
+I3_CONFIG_DIR="$HOME/.config/i3"
+POLYBAR_CONFIG_DIR="$HOME/.config/polybar/"
+ROFI_CONFIG_DIR="$HOME/.config/rofi/"
+SCRIPTS_DIR="$HOME/.local/share/scripts/"
+
+cp -r $I3_CONFIG_DIR $REPO_DIR
+cp -r $POLYBAR_CONFIG_DIR $REPO_DIR
+cp -r $ROFI_CONFIG_DIR $REPO_DIR
+cp -r $SCRIPTS_DIR $REPO_DIR
+
+cd $REPO_DIR
+
+CURRENT_DATE=$(date +"%Y-%m-%d %H:%M:%S")
+
+if [[ `git status --porcelain` ]]; then
+  git add .
+  git commit -m "Update :: $CURRENT_DATE"
+  git push origin main
+fi
