@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Flash effect using xrandr
-xrandr --output $(xrandr | grep " connected" | cut -f1 -d " ") --brightness 2
+xrandr --output $(xrandr | grep " connected" | cut -f1 -d " ") --brightness .8
 sleep 0.1
 xrandr --output $(xrandr | grep " connected" | cut -f1 -d " ") --brightness 1
 
