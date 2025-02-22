@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# Requires sudo privileges to execute
+
+# Send notification
+send_notification() {
+    local title="$1"
+    local message="$2"
+    DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus notify-send "$title" "$message"
+}
+
+# Clean package cache
+clean_package_cache() {
+    echo "Cleaning package cache..."
+    sudo pacman -Sc --noconfirm
+}
+
+# Remove old journal logs
+clean_journal_logs() {
+    echo "Cleaning journal logs..."
+    sudo journalctl --vacuum-time=2weeks
+}
+
+# Clean user cache
+clean_user_cache() {
+    echo "Cleaning user cache..."
+    [[ -d ~/.cache ]] && rm -rf ~/.cache/* 2>/dev/null
+}
+
+# Clean temporary files
+clean_temp_files() {
+    echo "Cleaning temporary files..."
+    [[ -d /tmp ]] && sudo rm -rf /tmp/* 2>/dev/null
+    [[ -d /var/tmp ]] && sudo rm -rf /var/tmp/* 2>/dev/null
+}
+
+# Remove orphaned packages
+remove_orphaned_packages() {
+    echo "Removing orphaned packages..."
+    if pacman -Qtdq &>/dev/null; then
+        sudo pacman -Rns $(pacman -Qtdq) --noconfirm
+    else
+        echo "No orphaned packages to remove."
+    fi
+}
+
+# Clean system logs
+clean_system_logs() {
+    echo "Cleaning system logs..."
+    sudo find /var/log -type f -name "*.log" -exec truncate -s 0 {} \; 2>/dev/null
+}
+
+# Remove unused Docker images and containers
+clean_docker() {
+    if command -v docker &>/dev/null; then
+        echo "Cleaning up Docker images and containers..."
+        docker system prune -af
+    else
+        echo "Docker not installed, skipping."
+    fi
+}
+
+# Empty trash
+empty_trash() {
+    echo "Emptying trash..."
+    [[ -d ~/.local/share/Trash ]] && rm -rf ~/.local/share/Trash/* 2>/dev/null
+}
+
+# Main function to execute all cleanup steps
+main() {
+    clean_package_cache
+    clean_journal_logs
+    clean_user_cache
+    clean_temp_files
+    remove_orphaned_packages
+    clean_system_logs
+    clean_docker
+    empty_trash
+
+    # Send notification
+    send_notification "System Cleanup Completed" "The weekly system cleanup has been successfully completed."
+    echo "System cleanup completed!"
+}
+
+main
+

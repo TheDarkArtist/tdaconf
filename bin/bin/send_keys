@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# This program is used to public gpg keys to commonly knowsn namewer4vers
+
+KEY_ID="0AD355085DF79157D5CD05C3F871B76C837E1BC4"
+
+servers=(
+"keys.openpgp.org",
+"pgp.mit.edu",
+"keyserver.ubuntu.com",
+"hkp://keys.gnupg.net",
+"pool.sks-keyservers.net",
+"pgp.key-server.io",
+"keyserver.pgp.com",
+"keyserver.nic.ad.jp",
+"pgp.uni-mainz.de",
+"keyserver.ams2.nl",
+"keys.gnupg.net",
+"keyserver.linux.it",
+"keyserver.mattrude.com",
+"keyserver.mirrorbits.net",
+"keyserver.snt.utwente.nl",
+"keyserver.tu-chemnitz.de",
+"pgpkeys.uk",
+"pgp.rediris.es",
+"keys.pgp.net",
+"keyserver.net",
+)
+
+for server in "${servers[@]}"; do
+    echo "Sending key to ${server}..."
+    gpg --keyserver "$server" --send-keys "$KEY_ID"
+    echo "Key sent to ${server} successfully."
+done
+

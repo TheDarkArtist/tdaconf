@@ -55,7 +55,7 @@ bindkey '^[[Z' undo                                             # Shift+tab undo
 
 export LD_PRELOAD=""
 export EDITOR="nvim"
-export PATH="$HOME/bin:/usr/lib/ccache/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:/usr/bin/core_perl:/usr/games/bin:$PATH"
+export PATH="$HOME/Development/flutter/bin:$HOME/bin:/usr/lib/ccache/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:/usr/bin/core_perl:/usr/games/bin:$HOME/.cargo/bin/:$PATH"
 
 if [ -f ~/.zsh_aliases ]; then
   source ~/.zsh_aliases
@@ -77,6 +77,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PRJ="/home/tda/Workspace/Next.js/tda-web-app"
+export PRJ="/home/tda/Workspace/Projects/tda-web-app/."
 
 export TERMINAL=alacritty
+

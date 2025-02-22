@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+
+# Enable strict error checking
+set -eo pipefail
+shopt -s inherit_errexit
+
+# Color definitions
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Configuration
+REPO_DIR="${REPO_DIR:-$HOME/Workspace/tda/repos/tdaconf}"
+MAX_FILE_LIST=50 # Truncate file list in commit message after this number
+
+# Initialize variables
+DRY_RUN=false
+VERBOSE=false
+
+# Logging functions
+log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
+log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+log_warn() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+log_error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
+
+# Show usage information
+usage() {
+    cat <<EOF
+Usage: $0 [OPTIONS]
+
+Sync configuration files to Git repository
+
+Options:
+  -d, --dry-run    Show what would be done without making changes
+  -v, --verbose    Show detailed output
+  -h, --help       Show this help message
+EOF
+}
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -d|--dry-run) DRY_RUN=true; shift ;;
+        -v|--verbose) VERBOSE=true; shift ;;
+        -h|--help) usage; exit 0 ;;
+        *) log_error "Unknown option: $1"; usage; exit 1 ;;
+    esac
+done
+
+# Validate Git repository
+validate_repo() {
+    (
+        cd "$REPO_DIR" || exit 1
+        if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+            log_error "Not a Git repository: $REPO_DIR"
+            return 1
+        fi
+    )
+}
+
+# Sync files using rsync
+sync_files() {
+    local src=$1
+    local dest=$2
+
+    if [[ ! -e $src ]]; then
+        log_warn "Source not found: $src"
+        return 1
+    fi
+
+    local rsync_opts=(-a --checksum --delete)
+    $VERBOSE && rsync_opts+=(-v)
+    $DRY_RUN && rsync_opts+=(-n)
+
+    log_info "Syncing $src → $dest"
+    rsync "${rsync_opts[@]}" "$src" "$dest"
+}
+
+# Main function
+main() {
+    # Create directory structure if needed
+    mkdir -p "$REPO_DIR/.config" "$REPO_DIR/.local/share" "$REPO_DIR/bin"
+
+    declare -A SOURCES=(
+        ["$HOME/.config/i3"]="$REPO_DIR/.config/i3"
+        ["$HOME/.config/polybar"]="$REPO_DIR/.config/polybar"
+        ["$HOME/.config/rofi"]="$REPO_DIR/.config/rofi"
+        ["$HOME/.local/share/scripts"]="$REPO_DIR/.local/share/scripts"
+        ["$HOME/.config/nvim"]="$REPO_DIR/.config/nvim"
+        ["$HOME/.config/alacritty"]="$REPO_DIR/.config/alacritty"
+        ["$HOME/bin"]="$REPO_DIR/bin"
+        ["$HOME/.zshrc"]="$REPO_DIR/.zshrc"
+        ["$HOME/.zsh_aliases"]="$REPO_DIR/.zsh_aliases"
+    )
+
+    # Sync all sources
+    for source in "${!SOURCES[@]}"; do
+        sync_files "$source" "${SOURCES[$source]}"
+    done
+
+    # Git operations
+    (
+        cd "$REPO_DIR" || exit 1
+
+        if ! git diff --quiet; then
+            changed_files=$(git diff --name-only | head -$MAX_FILE_LIST | tr '\n' ' ')
+            [[ $(git diff --name-only | wc -l) -gt $MAX_FILE_LIST ]] && changed_files+=" ..."
+
+            commit_message="Config update: $(date +"%Y-%m-%d %H:%M:%S")"
+            [[ -n $changed_files ]] && commit_message+=" - Changed: $changed_files"
+
+            if $DRY_RUN; then
+                log_success "Would commit changes:"
+                echo -e "${BLUE}$commit_message${NC}"
+                git status --short
+            else
+                git add .
+                git commit -m "$commit_message"
+                git push origin main
+                log_success "Changes pushed successfully"
+            fi
+        else
+            log_success "No changes to commit"
+        fi
+    )
+}
+
+# Run main program
+if validate_repo; then
+    if $DRY_RUN; then
+        log_info "Running in dry-run mode - no changes will be made"
+    fi
+    main
+else
+    exit 1
+fi
