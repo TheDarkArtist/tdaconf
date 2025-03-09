@@ -67,14 +67,13 @@ gaps inner 0
 gaps outer 0
 smart_gaps on
 smart_borders on
-default_border pixel 3
+default_border pixel 1
 
 ###################
 # Startup Applications
 ###################
 # System
 exec --no-startup-id dex --autostart --environment i3
-# exec --no-startup-id picom --config ~/.config/picom.conf
 exec --no-startup-id light-locker
 exec --no-startup-id blueman-applet
 # exec --no-startup-id dunst
@@ -87,6 +86,9 @@ exec --no-startup-id protonvpn-app
 # for some reason it is not required it just runs automatically
 # exec --no-startup-id pasystray
 
+# exec_always --no-startup-id pkill picom; sleep 1; picom --experimental-backends --config ~/.config/picom/picom.conf
+# bindsym $mod+Shift+t exec --no-startup-id "transset-df -a --min 0.6 --dec 0.1"
+# bindsym $mod+t exec --no-startup-id "transset-df -a --min 0.6 --inc 0.1"
 
 # Aesthetics
 exec --no-startup-id feh --bg-scale /home/tda/.local/share/wallpapers/arch-minimal-wallpapers/wallpapers/8k/ir-black.png
@@ -212,6 +214,7 @@ bindsym $mod+c exec ~/.local/share/scripts/bluetooth
 bindsym Print exec ~/.local/share/scripts/screenshot
 bindsym $mod+Print exec ~/.local/share/scripts/screenrec
 bindsym F8 exec alacritty -e ranger
+bindsym $mod+s exec xfce4-screenshooter
 
 
 ###################
@@ -248,8 +251,6 @@ mode "resize" {
 }
 
 # XFCE Utilities
-# exec --no-startup-id xfce4-panel
-# exec --no-startup-id xfdesktop
 exec --no-startup-id xfce4-power-manager
 exec --no-startup-id xfsettingsd
 exec --no-startup-id xfce4-clipman

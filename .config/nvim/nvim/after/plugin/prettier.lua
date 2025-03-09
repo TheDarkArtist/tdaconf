@@ -39,7 +39,6 @@ prettier.setup({
     "java",
     "toml",
     "lua",    -- Added support for Lua files if formatting is needed
-    "rust",   -- Added Rust for extended use cases
     "python", -- Included Python for broader coverage
   },
   -- Optional: Add support for ignoring specific directories or files

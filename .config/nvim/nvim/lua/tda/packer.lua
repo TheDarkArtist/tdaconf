@@ -1,139 +1,143 @@
 vim.cmd.packadd("packer.nvim")
 
 return require("packer").startup(function(use)
-  -- Packer can manage itself
-  use("wbthomason/packer.nvim")
+	-- Packer can manage itself
+	use("wbthomason/packer.nvim")
 
-  -- File Explorer and Navigation
-  use({
-    "nvim-tree/nvim-tree.lua",       -- File explorer
-    requires = {
-      "nvim-tree/nvim-web-devicons", -- File icons for better visuals
-    },
-  })
+	-- File Explorer and Navigation
+	use({
+		"nvim-tree/nvim-tree.lua", -- File explorer
+		requires = {
+			"nvim-tree/nvim-web-devicons", -- File icons for better visuals
+		},
+	})
 
-  -- Fuzzy Finder
-  use({
-    "nvim-telescope/telescope.nvim", -- Fuzzy finder for files, buffers, etc.
-    requires = { "nvim-lua/plenary.nvim" },
-  })
+	-- Fuzzy Finder
+	use({
+		"nvim-telescope/telescope.nvim", -- Fuzzy finder for files, buffers, etc.
+		requires = { "nvim-lua/plenary.nvim" },
+	})
 
-  -- LSP and Autocompletion
-  use({
-    "VonHeikemen/lsp-zero.nvim", -- Easy setup for LSP
-    branch = "v1.x",
-    requires = {
-      -- LSP Support
-      { "neovim/nvim-lspconfig" },             -- LSP configuration
-      { "williamboman/mason.nvim" },           -- LSP installer
-      { "williamboman/mason-lspconfig.nvim" }, -- Mason integration with LSPconfig
+	-- LSP and Autocompletion
+	use({
+		"VonHeikemen/lsp-zero.nvim", -- Easy setup for LSP
+		branch = "v1.x",
+		requires = {
+			-- LSP Support
+			{ "neovim/nvim-lspconfig" }, -- LSP configuration
+			{ "williamboman/mason.nvim" }, -- LSP installer
+			{ "williamboman/mason-lspconfig.nvim" }, -- Mason integration with LSPconfig
 
-      -- Autocompletion
-      { "hrsh7th/nvim-cmp" },         -- Completion engine
-      { "hrsh7th/cmp-buffer" },       -- Buffer completions
-      { "hrsh7th/cmp-path" },         -- Path completions
-      { "saadparwaiz1/cmp_luasnip" }, -- Snippet completions
-      { "hrsh7th/cmp-nvim-lsp" },     -- LSP completions
-      { "hrsh7th/cmp-nvim-lua" },     -- Neovim Lua API completions
+			-- Autocompletion
+			{ "hrsh7th/nvim-cmp" }, -- Completion engine
+			{ "hrsh7th/cmp-buffer" }, -- Buffer completions
+			{ "hrsh7th/cmp-path" }, -- Path completions
+			{ "saadparwaiz1/cmp_luasnip" }, -- Snippet completions
+			{ "hrsh7th/cmp-nvim-lsp" }, -- LSP completions
+			{ "hrsh7th/cmp-nvim-lua" }, -- Neovim Lua API completions
 
-      -- Snippets
-      { "L3MON4D3/LuaSnip" },             -- Snippet engine
-      { "rafamadriz/friendly-snippets" }, -- Predefined snippets
-    },
-  })
+			-- Snippets
+			{ "L3MON4D3/LuaSnip" }, -- Snippet engine
+			{ "rafamadriz/friendly-snippets" }, -- Predefined snippets
+		},
+	})
 
-  -- Treesitter
-  use({
-    "nvim-treesitter/nvim-treesitter", -- Syntax highlighting and parsing
-    run = function()
-      local ts_update = require("nvim-treesitter.install").update({ with_sync = true })
-      ts_update()
-    end,
-  })
-  use("nvim-treesitter/nvim-treesitter-context") -- Context-based highlighting
+	-- Treesitter
+	use({
+		"nvim-treesitter/nvim-treesitter", -- Syntax highlighting and parsing
+		run = function()
+			local ts_update = require("nvim-treesitter.install").update({ with_sync = true })
+			ts_update()
+		end,
+	})
 
-  -- Refactoring Tools
-  use("theprimeagen/refactoring.nvim") -- Refactoring utilities
+	-- use("nvim-treesitter/nvim-treesitter-context") -- Context-based highlighting
 
-  -- Git Integration
-  use("tpope/vim-fugitive") -- Git commands within Neovim
+	-- Refactoring Tools
+	-- use("theprimeagen/refactoring.nvim") -- Refactoring utilities
 
-  -- Trouble List
-  use("folke/trouble.nvim") -- Pretty diagnostics list
+	-- Git Integration
+	-- use("tpope/vim-fugitive") -- Git commands within Neovim
 
-  -- Status Line
-  use({
-    "nvim-lualine/lualine.nvim",                              -- Status line plugin
-    requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Icons for lualine
-  })
+	-- Trouble List
+	-- use("folke/trouble.nvim") -- Pretty diagnostics list
 
-  -- Formatting and Linting
-  use("jose-elias-alvarez/null-ls.nvim") -- External tool integration (e.g., formatters, linters)
+	-- Status Line
+	-- use({
+	--   "nvim-lualine/lualine.nvim",                              -- Status line plugin
+	--   requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Icons for lualine
+	-- })
 
-  -- Theme
-  use("EdenEast/nightfox.nvim") -- Theme for Neovim
+	-- Formatting and Linting
+	use("jose-elias-alvarez/null-ls.nvim") -- External tool integration (e.g., formatters, linters)
 
-  -- Markdown Support
-  use({
-    "iamcco/markdown-preview.nvim", -- Markdown preview
-    run = "cd app && npm install",
-    setup = function()
-      vim.g.mkdp_filetypes = { "markdown" }
-    end,
-    ft = { "markdown" },
-  })
+	-- Theme
+	use("EdenEast/nightfox.nvim") -- Theme for Neovim
 
-  -- Distraction-free Writing
-  use("junegunn/goyo.vim") -- Focus mode for writing
+	-- Markdown Support
+	use({
+		"iamcco/markdown-preview.nvim", -- Markdown preview
+		run = "cd app && npm install",
+		setup = function()
+			vim.g.mkdp_filetypes = { "markdown" }
+		end,
+		ft = { "markdown" },
+	})
 
-  -- Assembly Syntax Highlighting
-  use("Shirk/vim-gas") -- GNU Assembly syntax support
+	-- Distraction-free Writing
+	-- use("junegunn/goyo.vim") -- Focus mode for writing
 
-  -- Code Formatting
-  use("MunifTanjim/prettier.nvim") -- Prettier integration for code formatting
+	-- Assembly Syntax Highlighting
+	use("Shirk/vim-gas") -- GNU Assembly syntax support
 
-  -- Indentation Visualization
-  use("lukas-reineke/indent-blankline.nvim") -- Indentation guides
+	-- Code Formatting
+	use("MunifTanjim/prettier.nvim") -- Prettier integration for code formatting
 
-  -- Code Commenting
-  use("tpope/vim-commentary") -- Easily comment lines
+	-- Indentation Visualization
+	use("lukas-reineke/indent-blankline.nvim") -- Indentation guides
 
-  -- Flutter Development
-  use({
-    "akinsho/flutter-tools.nvim", -- Flutter support
-    requires = "nvim-lua/plenary.nvim",
-  })
+	-- Code Commenting
+	use("tpope/vim-commentary") -- Easily comment lines
 
-  -- Undo Tree
-  use("mbbill/undotree") -- Visualize undo history
+	-- Flutter Development
+	-- use({
+	-- 	"akinsho/flutter-tools.nvim", -- Flutter support
+	-- 	requires = "nvim-lua/plenary.nvim",
+	-- })
 
-  -- Auto-pairing
-  use({
-    "windwp/nvim-autopairs", -- Auto-close brackets, quotes, etc.
-    config = function()
-      require("nvim-autopairs").setup({})
-    end,
-  })
+	-- Undo Tree
+	-- use("mbbill/undotree") -- Visualize undo history
 
-  -- Comment Visualization
-  use({
-    "folke/todo-comments.nvim", -- Highlight TODO, NOTE, etc. comments
-    dependencies = { "nvim-lua/plenary.nvim" },
-  })
+	-- Auto-pairing
+	use({
+		"windwp/nvim-autopairs", -- Auto-close brackets, quotes, etc.
+		config = function()
+			require("nvim-autopairs").setup({})
+		end,
+	})
 
-  -- Multi-cursor Support
-  -- This one is the best, but needs remapping which I can't figure out for now.
-  -- use({ "mg979/vim-visual-multi", branch = "master" })
+	-- Comment Visualization
+	-- use({
+	-- 	"folke/todo-comments.nvim", -- Highlight TODO, NOTE, etc. comments
+	-- 	dependencies = { "nvim-lua/plenary.nvim" },
+	-- })
 
-  -- Cloak sensitive information in files
-  use("laytan/cloak.nvim") -- Hide sensitive information (e.g., API keys)
+	-- Multi-cursor Support
+	-- This one is the best, but needs remapping which I can't figure out for now.
+	-- use({ "mg979/vim-visual-multi", branch = "master" })
 
-  -- github themes
-  --	use("projekt0n/github-nvim-theme")
+	-- Cloak sensitive information in files
+	-- use("laytan/cloak.nvim") -- Hide sensitive information (e.g., API keys)
 
-  use("simrat39/rust-tools.nvim")
+	-- github themes
+	--	use("projekt0n/github-nvim-theme")
 
-  -- use("github/copilot.vim")
+	-- use("simrat39/rust-tools.nvim")
 
-  -- use("Exafunction/codeium.vim")
+	-- use("github/copilot.vim")
+
+	-- use("Exafunction/codeium.vim")
+
+	-- indent lines
+	use("lukas-reineke/indent-blankline.nvim")
 end)
