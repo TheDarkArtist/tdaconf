@@ -26,7 +26,7 @@ alias du="du -h"
 alias gwen="gwenview"
 alias ff="fastfetch"
 alias cdp='cd ${(e)PRJ}'
-alias cdw='cd ~/Workspace/Engagements/asteron/'
+alias cdw='cd ~/Workspace/Engagements/asteron/projects/melt_web/'
 alias pm="podman"
 alias gpp="git switch prod && git merge dev && git push && git switch dev"
 alias .2="watch --interval=.2"

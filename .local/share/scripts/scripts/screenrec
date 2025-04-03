@@ -1,30 +1,16 @@
 #!/bin/bash
 
-DIR=~/Videos/Screenrecs
-mkdir -p "$DIR"
-PIDFILE="/tmp/screenrec.pid"
-COUNTFILE="$DIR/.record_count"
+PIDFILE="${HOME}/.screencast.pid"
 
-if [[ -f "$PIDFILE" ]]; then
-    kill "$(cat "$PIDFILE")"
-    rm "$PIDFILE"
-    notify-send "Screen Recording" "Stopped" --icon=video-x-generic
+if [[ -e "${PIDFILE}" ]]; then
+    # Stop recording
+    kill "$(cat "${PIDFILE}")"
+    rm "${PIDFILE}"
+    notify-send "Screen Recording" "Stopped recording."
 else
-    # Read and increment the counter
-    if [[ -f "$COUNTFILE" ]]; then
-        COUNT=$(cat "$COUNTFILE")
-    else
-        COUNT=0
-    fi
-    COUNT=$((COUNT + 1))
-    echo "$COUNT" > "$COUNTFILE"
-
-    FILE="$DIR/rec_$(date +'%Y-%m-%d_%H-%M-%S')-$(printf '%04d' $COUNT).mp4"
-    RESOLUTION=$(xdpyinfo | awk '/dimensions/{print $2}')
-    ffmpeg -y -video_size "$RESOLUTION" -framerate 60 -f x11grab -i :0 \
-        -c:v libx264 -preset ultrafast -pix_fmt yuv420p "$FILE" &> /dev/null &
-
-    echo $! > "$PIDFILE"
-    notify-send "Screen Recording" "Started: $(basename "$FILE")" --icon=video-x-generic
+    # Start recording
+    simplescreenrecorder --start-recording &
+    echo $! > "${PIDFILE}"
+    notify-send "Screen Recording" "Started recording."
 fi
 

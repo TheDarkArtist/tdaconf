@@ -82,6 +82,8 @@ exec --no-startup-id clipmenud
 exec --no-startup-id lxpolkit
 exec --no-startup-id nm-applet
 exec --no-startup-id protonvpn-app
+exec --no-startup-id simplescreenrecorder --start-hidden
+exec --no-startup-id aw-qt --no-gui
 
 # for some reason it is not required it just runs automatically
 # exec --no-startup-id pasystray
@@ -133,6 +135,8 @@ for_window [class="xfce4-panel"] floating enable
 for_window [class="Gpick"] floating enable
 for_window [class="Device Manager"] floating enable
 for_window [class="Emulator"] floating enable
+for_window [class="SimpleScreenRecorder"] floating enable
+for_window [class="Protonvpn-app"] floating enable
 
 # Window Navigation
 bindsym $alt+h focus left
@@ -197,6 +201,7 @@ assign [class="librewolf"] $ws3
 assign [class="code-oss"] $ws1
 assign [class="discord"] $ws9
 assign [class="Virt-manager"] $ws8
+assign [class="SimpleScreenRecorder"] $ws8
 
 ###################
 # Application Shortcuts
@@ -212,9 +217,10 @@ bindsym $mod+Ctrl+Escape xkill
 bindsym $mod+p exec --no-startup-id pavucontrol
 bindsym $mod+c exec ~/.local/share/scripts/bluetooth
 bindsym Print exec ~/.local/share/scripts/screenshot
-bindsym $mod+Print exec ~/.local/share/scripts/screenrec
 bindsym F8 exec alacritty -e ranger
-bindsym $mod+s exec xfce4-screenshooter
+bindsym $mod+s exec flameshot screen
+bindsym $mod+Shift+s exec flameshot gui
+
 
 
 ###################

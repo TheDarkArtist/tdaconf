@@ -69,7 +69,7 @@ return require("packer").startup(function(use)
 	-- })
 
 	-- Formatting and Linting
-	use("jose-elias-alvarez/null-ls.nvim") -- External tool integration (e.g., formatters, linters)
+	-- use("jose-elias-alvarez/null-ls.nvim") -- External tool integration (e.g., formatters, linters)
 
 	-- Theme
 	use("EdenEast/nightfox.nvim") -- Theme for Neovim
@@ -77,7 +77,7 @@ return require("packer").startup(function(use)
 	-- Markdown Support
 	use({
 		"iamcco/markdown-preview.nvim", -- Markdown preview
-		run = "cd app && npm install",
+		run = "cd app && bun install",
 		setup = function()
 			vim.g.mkdp_filetypes = { "markdown" }
 		end,
@@ -138,6 +138,6 @@ return require("packer").startup(function(use)
 
 	-- use("Exafunction/codeium.vim")
 
-	-- indent lines
-	use("lukas-reineke/indent-blankline.nvim")
+  use("stevearc/conform.nvim")
+
 end)
