@@ -26,6 +26,9 @@ zstyle ':completion:*' format '>>> %d'
 compinit
 _comp_options+=(globdots) # hidden files are included
 
+
+# precmd(){ pw-play ~/.local/share/sounds/beep.wav}
+
 # Keybindings section
 bindkey -e
 bindkey '^[[7~' beginning-of-line                               # Home key
@@ -55,7 +58,7 @@ bindkey '^[[Z' undo                                             # Shift+tab undo
 
 export LD_PRELOAD=""
 export EDITOR="nvim"
-export PATH="$HOME/Development/flutter/bin:$HOME/bin:/usr/lib/ccache/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:/usr/bin/core_perl:/usr/games/bin:$HOME/.cargo/bin/:$HOME/Development/go/bin/:$PATH"
+export PATH="$HOME/Development/flutter/bin:$HOME/bin:/usr/lib/ccache/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:/usr/bin/core_perl:/usr/games/bin:$HOME/.cargo/bin/:$HOME/Development/go/bin/:$HOME/.config/composer/vendor/bin/:$PATH"
 
 if [ -f ~/.zsh_aliases ]; then
   source ~/.zsh_aliases
@@ -84,6 +87,7 @@ export ANDROID_HOME="$HOME/Development/Android/Sdk"
 export NDK_HOME="$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)"
 export GOPATH=$HOME/Development/go
 export PATH="/home/tda/.bun/bin:$PATH"
+export CAPACITOR_ANDROID_STUDIO_PATH="/sbin/android-studio"
 
 # pnpm
 export PNPM_HOME="/home/tda/.local/share/pnpm"
