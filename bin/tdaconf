@@ -27,7 +27,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 
 # Show usage information
 usage() {
-    cat <<EOF
+  cat <<EOF
 Usage: $0 [OPTIONS]
 
 Sync configuration files to Git repository
@@ -41,98 +41,114 @@ EOF
 
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
-    case $1 in
-        -d|--dry-run) DRY_RUN=true; shift ;;
-        -v|--verbose) VERBOSE=true; shift ;;
-        -h|--help) usage; exit 0 ;;
-        *) log_error "Unknown option: $1"; usage; exit 1 ;;
-    esac
+  case $1 in
+  -d | --dry-run)
+    DRY_RUN=true
+    shift
+    ;;
+  -v | --verbose)
+    VERBOSE=true
+    shift
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    log_error "Unknown option: $1"
+    usage
+    exit 1
+    ;;
+  esac
 done
 
 # Validate Git repository
 validate_repo() {
-    (
-        cd "$REPO_DIR" || exit 1
-        if ! git rev-parse --is-inside-work-tree &>/dev/null; then
-            log_error "Not a Git repository: $REPO_DIR"
-            return 1
-        fi
-    )
+  (
+    cd "$REPO_DIR" || exit 1
+    if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+      log_error "Not a Git repository: $REPO_DIR"
+      return 1
+    fi
+  )
 }
 
 # Sync files using rsync
 sync_files() {
-    local src=$1
-    local dest=$2
+  local src=$1
+  local dest=$2
 
-    if [[ ! -e $src ]]; then
-        log_warn "Source not found: $src"
-        return 1
-    fi
+  if [[ ! -e $src ]]; then
+    log_warn "Source not found: $src"
+    return 1
+  fi
 
-    local rsync_opts=(-a --checksum --delete)
-    $VERBOSE && rsync_opts+=(-v)
-    $DRY_RUN && rsync_opts+=(-n)
+  local rsync_opts=(-a --checksum --delete)
+  $VERBOSE && rsync_opts+=(-v)
+  $DRY_RUN && rsync_opts+=(-n)
 
-    log_info "Syncing $src → $dest"
-    rsync "${rsync_opts[@]}" "$src" "$dest"
+  log_info "Syncing $src → $dest"
+  rsync "${rsync_opts[@]}" "$src" "$dest"
 }
 
 # Main function
 main() {
-    # Create directory structure if needed
-    mkdir -p "$REPO_DIR/.config" "$REPO_DIR/.local/share" "$REPO_DIR/bin"
+  # Create directory structure if needed
+  mkdir -p "$REPO_DIR/.config" "$REPO_DIR/.local/share" "$REPO_DIR/bin"
 
-    declare -A SOURCES=(
-        ["$HOME/.config/i3"]="$REPO_DIR/.config"
-        ["$HOME/.config/polybar"]="$REPO_DIR/.config"
-        ["$HOME/.config/rofi"]="$REPO_DIR/.config"
-        ["$HOME/.local/share/scripts"]="$REPO_DIR/.local/share"
-        ["$HOME/.config/nvim"]="$REPO_DIR/.config"
-        ["$HOME/.config/alacritty"]="$REPO_DIR/.config"
-        ["$HOME/bin"]="$REPO_DIR"
-        ["$HOME/.zshrc"]="$REPO_DIR/.zshrc"
-        ["$HOME/.zsh_aliases"]="$REPO_DIR/.zsh_aliases"
-    )
+  declare -A SOURCES=(
+    ["$HOME/.config/i3"]="$REPO_DIR/.config"
+    ["$HOME/.config/polybar"]="$REPO_DIR/.config"
+    ["$HOME/.config/rofi"]="$REPO_DIR/.config"
+    ["$HOME/.local/share/scripts"]="$REPO_DIR/.local/share"
+    ["$HOME/.config/nvim"]="$REPO_DIR/.config"
+    ["$HOME/.config/alacritty"]="$REPO_DIR/.config"
+    ["$HOME/bin"]="$REPO_DIR"
+    ["$HOME/.zshrc"]="$REPO_DIR"
+    ["$HOME/.zsh_aliases"]="$REPO_DIR"
+    ["$HOME/.profile"]="$REPO_DIR"
+    ["$HOME/.xprofile"]="$REPO_DIR"
+    ["$HOME/.xinitrc"]="$REPO_DIR"
+  )
 
-    # Sync all sources
-    for source in "${!SOURCES[@]}"; do
-        sync_files "$source" "${SOURCES[$source]}"
-    done
+  # Sync all sources
+  for source in "${!SOURCES[@]}"; do
+    sync_files "$source" "${SOURCES[$source]}"
+  done
 
-    # Git operations
-    (
-        cd "$REPO_DIR" || exit 1
+  # Git operations
+  (
+    cd "$REPO_DIR" || exit 1
 
-        if ! git diff --quiet; then
-            changed_files=$(git diff --name-only | head -$MAX_FILE_LIST | tr '\n' ' ')
-            [[ $(git diff --name-only | wc -l) -gt $MAX_FILE_LIST ]] && changed_files+=" ..."
+    if ! git diff --quiet; then
+      changed_files=$(git diff --name-only | head -$MAX_FILE_LIST | tr '\n' ' ')
+      [[ $(git diff --name-only | wc -l) -gt $MAX_FILE_LIST ]] && changed_files+=" ..."
 
-            commit_message="Config update: $(date +"%Y-%m-%d %H:%M:%S")"
-            [[ -n $changed_files ]] && commit_message+=" - Changed: $changed_files"
+      commit_message="Config update: $(date +"%Y-%m-%d %H:%M:%S")"
+      [[ -n $changed_files ]] && commit_message+=" - Changed: $changed_files"
 
-            if $DRY_RUN; then
-                log_success "Would commit changes:"
-                echo -e "${BLUE}$commit_message${NC}"
-                git status --short
-            else
-                git add .
-                git commit -m "$commit_message"
-                git push origin main
-                log_success "Changes pushed successfully"
-            fi
-        else
-            log_success "No changes to commit"
-        fi
-    )
+      if $DRY_RUN; then
+        log_success "Would commit changes:"
+        echo -e "${BLUE}$commit_message${NC}"
+        git status --short
+      else
+        git add .
+        git commit -m "$commit_message"
+        git push origin main
+        log_success "Changes pushed successfully"
+      fi
+    else
+      log_success "No changes to commit"
+    fi
+  )
 }
 
 # Run main program
 if validate_repo; then
-    if $DRY_RUN; then
-        log_info "Running in dry-run mode - no changes will be made"
-    fi
-    main
+  if $DRY_RUN; then
+    log_info "Running in dry-run mode - no changes will be made"
+  fi
+  main
 else
-    exit 1
+  exit 1
 fi
