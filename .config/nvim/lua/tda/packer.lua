@@ -1,139 +1,154 @@
 vim.cmd.packadd("packer.nvim")
 
 return require("packer").startup(function(use)
-  -- Packer can manage itself
-  use("wbthomason/packer.nvim")
+	-- Packer can manage itself
+	use("wbthomason/packer.nvim")
 
-  -- File Explorer and Navigation
-  use({
-    "nvim-tree/nvim-tree.lua",       -- File explorer
-    requires = {
-      "nvim-tree/nvim-web-devicons", -- File icons for better visuals
-    },
-  })
+	-- File Explorer and Navigation
+	-- use({
+	-- 	"nvim-tree/nvim-tree.lua", -- File explorer
+	-- 	requires = {
+	-- 		"nvim-tree/nvim-web-devicons", -- File icons for better visuals
+	-- 	},
+	-- })
 
-  -- Fuzzy Finder
-  use({
-    "nvim-telescope/telescope.nvim", -- Fuzzy finder for files, buffers, etc.
-    requires = { "nvim-lua/plenary.nvim" },
-  })
+	use({
+		"stevearc/oil.nvim",
+		requires = { "nvim-tree/nvim-web-devicons" },
+	})
 
-  -- LSP and Autocompletion
-  use({
-    "VonHeikemen/lsp-zero.nvim", -- Easy setup for LSP
-    branch = "v1.x",
-    requires = {
-      -- LSP Support
-      { "neovim/nvim-lspconfig" },             -- LSP configuration
-      { "williamboman/mason.nvim" },           -- LSP installer
-      { "williamboman/mason-lspconfig.nvim" }, -- Mason integration with LSPconfig
+	-- Fuzzy Finder
+	use({
+		"nvim-telescope/telescope.nvim", -- Fuzzy finder for files, buffers, etc.
+		requires = { "nvim-lua/plenary.nvim" },
+	})
 
-      -- Autocompletion
-      { "hrsh7th/nvim-cmp" },         -- Completion engine
-      { "hrsh7th/cmp-buffer" },       -- Buffer completions
-      { "hrsh7th/cmp-path" },         -- Path completions
-      { "saadparwaiz1/cmp_luasnip" }, -- Snippet completions
-      { "hrsh7th/cmp-nvim-lsp" },     -- LSP completions
-      { "hrsh7th/cmp-nvim-lua" },     -- Neovim Lua API completions
+	-- LSP and Autocompletion
+	use({
+		"VonHeikemen/lsp-zero.nvim", -- Easy setup for LSP
+		branch = "v1.x",
+		requires = {
+			-- LSP Support
+			{ "neovim/nvim-lspconfig" }, -- LSP configuration
+			{ "williamboman/mason.nvim" }, -- LSP installer
+			{ "williamboman/mason-lspconfig.nvim" }, -- Mason integration with LSPconfig
 
-      -- Snippets
-      { "L3MON4D3/LuaSnip" },             -- Snippet engine
-      { "rafamadriz/friendly-snippets" }, -- Predefined snippets
-    },
-  })
+			-- Autocompletion
+			{ "hrsh7th/nvim-cmp" }, -- Completion engine
+			{ "hrsh7th/cmp-buffer" }, -- Buffer completions
+			{ "hrsh7th/cmp-path" }, -- Path completions
+			{ "saadparwaiz1/cmp_luasnip" }, -- Snippet completions
+			{ "hrsh7th/cmp-nvim-lsp" }, -- LSP completions
+			{ "hrsh7th/cmp-nvim-lua" }, -- Neovim Lua API completions
 
-  -- Treesitter
-  use({
-    "nvim-treesitter/nvim-treesitter", -- Syntax highlighting and parsing
-    run = function()
-      local ts_update = require("nvim-treesitter.install").update({ with_sync = true })
-      ts_update()
-    end,
-  })
-  use("nvim-treesitter/nvim-treesitter-context") -- Context-based highlighting
+			-- Snippets
+			{ "L3MON4D3/LuaSnip" }, -- Snippet engine
+			{ "rafamadriz/friendly-snippets" }, -- Predefined snippets
+		},
+	})
 
-  -- Refactoring Tools
-  use("theprimeagen/refactoring.nvim") -- Refactoring utilities
+	-- Treesitter
+	use({
+		"nvim-treesitter/nvim-treesitter", -- Syntax highlighting and parsing
+		run = function()
+			local ts_update = require("nvim-treesitter.install").update({ with_sync = true })
+			ts_update()
+		end,
+	})
 
-  -- Git Integration
-  use("tpope/vim-fugitive") -- Git commands within Neovim
+	-- use("nvim-treesitter/nvim-treesitter-context") -- Context-based highlighting
 
-  -- Trouble List
-  use("folke/trouble.nvim") -- Pretty diagnostics list
+	-- Refactoring Tools
+	-- use("theprimeagen/refactoring.nvim") -- Refactoring utilities
 
-  -- Status Line
-  use({
-    "nvim-lualine/lualine.nvim",                              -- Status line plugin
-    requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Icons for lualine
-  })
+	-- Git Integration
+	-- use("tpope/vim-fugitive") -- Git commands within Neovim
 
-  -- Formatting and Linting
-  use("jose-elias-alvarez/null-ls.nvim") -- External tool integration (e.g., formatters, linters)
+	-- Trouble List
+	-- use("folke/trouble.nvim") -- Pretty diagnostics list
 
-  -- Theme
-  use("EdenEast/nightfox.nvim") -- Theme for Neovim
+	-- Status Line
+	-- use({
+	--   "nvim-lualine/lualine.nvim",                              -- Status line plugin
+	--   requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Icons for lualine
+	-- })
 
-  -- Markdown Support
-  use({
-    "iamcco/markdown-preview.nvim", -- Markdown preview
-    run = "cd app && npm install",
-    setup = function()
-      vim.g.mkdp_filetypes = { "markdown" }
-    end,
-    ft = { "markdown" },
-  })
+	-- Formatting and Linting
+	-- use("jose-elias-alvarez/null-ls.nvim") -- External tool integration (e.g., formatters, linters)
 
-  -- Distraction-free Writing
-  use("junegunn/goyo.vim") -- Focus mode for writing
+	-- Theme
+	use("EdenEast/nightfox.nvim") -- Theme for Neovim
 
-  -- Assembly Syntax Highlighting
-  use("Shirk/vim-gas") -- GNU Assembly syntax support
+	-- Markdown Support
+	use({
+		"iamcco/markdown-preview.nvim",
+		run = function()
+			vim.fn["mkdp#util#install"]()
+		end,
+	})
+	use({
+		"iamcco/markdown-preview.nvim",
+		run = "cd app && npm install",
+		setup = function()
+			vim.g.mkdp_filetypes = { "markdown" }
+			vim.g.mkdp_echo_preview_url = 1
+		end,
+		ft = { "markdown" },
+	})
 
-  -- Code Formatting
-  use("MunifTanjim/prettier.nvim") -- Prettier integration for code formatting
+	-- Distraction-free Writing
+	-- use("junegunn/goyo.vim") -- Focus mode for writing
 
-  -- Indentation Visualization
-  use("lukas-reineke/indent-blankline.nvim") -- Indentation guides
+	-- Assembly Syntax Highlighting
+	use("Shirk/vim-gas") -- GNU Assembly syntax support
 
-  -- Code Commenting
-  use("tpope/vim-commentary") -- Easily comment lines
+	-- Code Formatting
+	use("MunifTanjim/prettier.nvim") -- Prettier integration for code formatting
 
-  -- Flutter Development
-  use({
-    "akinsho/flutter-tools.nvim", -- Flutter support
-    requires = "nvim-lua/plenary.nvim",
-  })
+	-- Indentation Visualization
+	use("lukas-reineke/indent-blankline.nvim") -- Indentation guides
 
-  -- Undo Tree
-  use("mbbill/undotree") -- Visualize undo history
+	-- Code Commenting
+	use("tpope/vim-commentary") -- Easily comment lines
 
-  -- Auto-pairing
-  use({
-    "windwp/nvim-autopairs", -- Auto-close brackets, quotes, etc.
-    config = function()
-      require("nvim-autopairs").setup({})
-    end,
-  })
+	-- Flutter Development
+	-- use({
+	-- 	"akinsho/flutter-tools.nvim", -- Flutter support
+	-- 	requires = "nvim-lua/plenary.nvim",
+	-- })
 
-  -- Comment Visualization
-  use({
-    "folke/todo-comments.nvim", -- Highlight TODO, NOTE, etc. comments
-    dependencies = { "nvim-lua/plenary.nvim" },
-  })
+	-- Undo Tree
+	-- use("mbbill/undotree") -- Visualize undo history
 
-  -- Multi-cursor Support
-  -- This one is the best, but needs remapping which I can't figure out for now.
-  -- use({ "mg979/vim-visual-multi", branch = "master" })
+	-- Auto-pairing
+	use({
+		"windwp/nvim-autopairs", -- Auto-close brackets, quotes, etc.
+		config = function()
+			require("nvim-autopairs").setup({})
+		end,
+	})
 
-  -- Cloak sensitive information in files
-  use("laytan/cloak.nvim") -- Hide sensitive information (e.g., API keys)
+	-- Comment Visualization
+	-- use({
+	-- 	"folke/todo-comments.nvim", -- Highlight TODO, NOTE, etc. comments
+	-- 	dependencies = { "nvim-lua/plenary.nvim" },
+	-- })
 
-  -- github themes
-  --	use("projekt0n/github-nvim-theme")
+	-- Multi-cursor Support
+	-- This one is the best, but needs remapping which I can't figure out for now.
+	-- use({ "mg979/vim-visual-multi", branch = "master" })
 
-  use("simrat39/rust-tools.nvim")
+	-- Cloak sensitive information in files
+	-- use("laytan/cloak.nvim") -- Hide sensitive information (e.g., API keys)
 
-  -- use("github/copilot.vim")
+	-- github themes
+	--	use("projekt0n/github-nvim-theme")
 
-  -- use("Exafunction/codeium.vim")
+	-- use("simrat39/rust-tools.nvim")
+
+	-- use("github/copilot.vim")
+
+	-- use("Exafunction/codeium.vim")
+
+	use("stevearc/conform.nvim")
 end)

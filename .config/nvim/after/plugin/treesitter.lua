@@ -1,6 +1,16 @@
 require("nvim-treesitter.configs").setup({
   -- A list of parser names, or "all"
-  ensure_installed = { "svelte", "vimdoc", "javascript", "typescript", "c", "lua", "rust" },
+
+  ensure_installed = {
+    "svelte",     -- For Svelte development (frontend frameworks)
+    "vimdoc",     -- For writing Vim documentation
+    "javascript", -- For JavaScript development
+    "typescript", -- For TypeScript development
+    "c",          -- For C programming (low-level systems)
+    "cpp",
+    "lua",        -- For Lua scripting (Neovim configuration/plugins)
+    "rust",       -- For Rust programming (modern systems programming)
+  },
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
@@ -19,8 +29,4 @@ require("nvim-treesitter.configs").setup({
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
-})
-
-require("treesitter-context").setup({
-  enable = false, -- Disables the feature entirely
 })

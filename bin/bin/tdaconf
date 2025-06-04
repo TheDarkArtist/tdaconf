@@ -88,7 +88,7 @@ main() {
         ["$HOME/.config/polybar"]="$REPO_DIR/.config/polybar"
         ["$HOME/.config/rofi"]="$REPO_DIR/.config/rofi"
         ["$HOME/.local/share/scripts"]="$REPO_DIR/.local/share/scripts"
-        ["$HOME/.config/nvim"]="$REPO_DIR/.config/nvim"
+        ["$HOME/.config/nvim"]="$REPO_DIR/.config"
         ["$HOME/.config/alacritty"]="$REPO_DIR/.config/alacritty"
         ["$HOME/bin"]="$REPO_DIR/bin"
         ["$HOME/.zshrc"]="$REPO_DIR/.zshrc"

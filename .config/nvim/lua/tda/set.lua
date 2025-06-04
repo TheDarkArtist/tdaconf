@@ -25,7 +25,7 @@ vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
 
-vim.opt.scrolloff = 0
+vim.opt.scrolloff = 3
 vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
@@ -33,4 +33,6 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
 
-vim.g.loaded_netrwPlugin = 1
+-- vim.g.loaded_netrwPlugin = 1
+
+vim.cmd("highlight VertSplit guifg=#c0c0c0 guibg=NONE")
