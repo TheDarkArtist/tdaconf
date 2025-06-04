@@ -101,6 +101,8 @@ main() {
     ["$HOME/.config/polybar"]="$REPO_DIR/.config"
     ["$HOME/.config/rofi"]="$REPO_DIR/.config"
     ["$HOME/.local/share/scripts"]="$REPO_DIR/.local/share"
+    ["$HOME/.local/share/sounds"]="$REPO_DIR/.local/share"
+    ["$HOME/.local/share/wallpapers/"]="$REPO_DIR/.local/share"
     ["$HOME/.config/nvim"]="$REPO_DIR/.config"
     ["$HOME/.config/alacritty"]="$REPO_DIR/.config"
     ["$HOME/bin"]="$REPO_DIR"
