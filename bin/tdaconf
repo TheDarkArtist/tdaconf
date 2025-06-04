@@ -84,13 +84,13 @@ main() {
     mkdir -p "$REPO_DIR/.config" "$REPO_DIR/.local/share" "$REPO_DIR/bin"
 
     declare -A SOURCES=(
-        ["$HOME/.config/i3"]="$REPO_DIR/.config/i3"
-        ["$HOME/.config/polybar"]="$REPO_DIR/.config/polybar"
-        ["$HOME/.config/rofi"]="$REPO_DIR/.config/rofi"
-        ["$HOME/.local/share/scripts"]="$REPO_DIR/.local/share/scripts"
+        ["$HOME/.config/i3"]="$REPO_DIR/.config"
+        ["$HOME/.config/polybar"]="$REPO_DIR/.config"
+        ["$HOME/.config/rofi"]="$REPO_DIR/.config"
+        ["$HOME/.local/share/scripts"]="$REPO_DIR/.local/share"
         ["$HOME/.config/nvim"]="$REPO_DIR/.config"
-        ["$HOME/.config/alacritty"]="$REPO_DIR/.config/alacritty"
-        ["$HOME/bin"]="$REPO_DIR/bin"
+        ["$HOME/.config/alacritty"]="$REPO_DIR/.config"
+        ["$HOME/bin"]="$REPO_DIR"
         ["$HOME/.zshrc"]="$REPO_DIR/.zshrc"
         ["$HOME/.zsh_aliases"]="$REPO_DIR/.zsh_aliases"
     )

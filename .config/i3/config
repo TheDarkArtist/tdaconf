@@ -67,37 +67,33 @@ gaps inner 0
 gaps outer 0
 smart_gaps on
 smart_borders on
-default_border pixel 3
+default_border pixel 1
 
 ###################
 # Startup Applications
 ###################
 # System
 exec --no-startup-id dex --autostart --environment i3
-# exec --no-startup-id picom --config ~/.config/picom.conf
-exec --no-startup-id light-locker
-exec --no-startup-id blueberry-tray
+exec --no-startup-id blueman-applet
 # exec --no-startup-id dunst
 exec --no-startup-id /usr/lib/xfce4/notifyd/xfce4-notifyd &
 exec --no-startup-id clipmenud
 exec --no-startup-id lxpolkit
 exec --no-startup-id nm-applet
 exec --no-startup-id protonvpn-app
+exec --no-startup-id simplescreenrecorder --start-hidden
+# exec --no-startup-id aw-qt --no-gui
 
 # for some reason it is not required it just runs automatically
 # exec --no-startup-id pasystray
 
+# exec_always --no-startup-id pkill picom; sleep 1; picom --experimental-backends --config ~/.config/picom/picom.conf
+# bindsym $mod+Shift+t exec --no-startup-id "transset-df -a --min 0.6 --dec 0.1"
+# bindsym $mod+t exec --no-startup-id "transset-df -a --min 0.6 --inc 0.1"
 
 # Aesthetics
 exec --no-startup-id feh --bg-scale /home/tda/.local/share/wallpapers/arch-minimal-wallpapers/wallpapers/8k/ir-black.png
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
-
-# Security
-exec --no-startup-id xss-lock --transfer-sleep-lock -- light-locker-command -l
-###################
-# Display Settings
-###################
-exec --no-startup-id xrandr --output HDMI-0 --primary --scale 1.35x1.35 --mode 1920x1080 --rate 60
 
 ###################
 # Audio Controls
@@ -126,9 +122,13 @@ tiling_drag modifier titlebar
 for_window [class="pavucontrol"] floating enable
 for_window [class="nm-connection-editor"] floating enable
 for_window [class="feh"] floating enable
-for_window [class="Blueberry.py"] floating enable
-for_window [class="xfce4-panel"] floating enable
+for_window [class="Blueman-manager"] floating enable
+# for_window [class="xfce4-panel"] floating enable
 for_window [class="Gpick"] floating enable
+for_window [class="Device Manager"] floating enable
+for_window [class="Emulator"] floating enable
+for_window [class="SimpleScreenRecorder"] floating enable
+for_window [class="Protonvpn-app"] floating enable
 
 # Window Navigation
 bindsym $alt+h focus left
@@ -189,9 +189,10 @@ bindsym $alt+Shift+9 move container to workspace number $ws9
 bindsym $alt+Shift+0 move container to workspace number $ws10
 
 # Workspace assignments
-assign [class="librewolf"] $ws3
 assign [class="code-oss"] $ws1
 assign [class="discord"] $ws9
+assign [class="Virt-manager"] $ws8
+assign [class="SimpleScreenRecorder"] $ws8
 
 ###################
 # Application Shortcuts
@@ -208,6 +209,9 @@ bindsym $mod+p exec --no-startup-id pavucontrol
 bindsym $mod+c exec ~/.local/share/scripts/bluetooth
 bindsym Print exec ~/.local/share/scripts/screenshot
 bindsym F8 exec alacritty -e ranger
+bindsym $mod+s exec flameshot screen
+bindsym $mod+Shift+s exec flameshot gui
+
 
 
 ###################
@@ -219,7 +223,7 @@ bindsym $alt+Shift+r restart
 # bindsym $alt+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 bindsym $alt+Shift+e exec ~/.local/share/scripts/powermenu
 # Lock Screen
-bindsym $mod+l exec light-locker-command -l
+bindsym $mod+l exec i3lock -i /home/tda/.local/share/wallpapers/chess-bg.jpg -b -e -f -k --date-size=50 --time-size=120 --time-pos="1350:320" --date-pos="1357:400" --time-color=FFFFFFFF --date-color=FFFFFFFF --ind-pos="2560:1400"
 # Pick color and copy to clipboard
 bindsym $mod+Shift+p exec gpick -p -o
 
@@ -244,9 +248,6 @@ mode "resize" {
 }
 
 # XFCE Utilities
-# exec --no-startup-id xfce4-panel
-# exec --no-startup-id xfdesktop
-exec --no-startup-id xfce4-power-manager
-exec --no-startup-id xfsettingsd
+# exec --no-startup-id xfsettingsd
 exec --no-startup-id xfce4-clipman
 

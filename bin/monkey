@@ -1,5 +1,6 @@
 # Script to start "monkey" on the device, which has a very rudimentary
 # shell.
+# what is this script do
 #
 base=/system
 export CLASSPATH=$base/framework/monkey.jar

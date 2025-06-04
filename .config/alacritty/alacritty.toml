@@ -23,7 +23,7 @@ white = "0xfcfcfc"
 yellow = "0xf67400"
 
 [colors.primary]
-background = "0x18181b"
+background = "0x0a0a0d"
 foreground = "0xfcfcfc"
 
 [colors.selection]
@@ -34,7 +34,7 @@ text = "0x18181b"
 TERM = "xterm-256color"
 
 [font]
-size = 12.0
+size = 9.0
 
 [font.bold]
 family = "Hack Nerd Font"
@@ -62,6 +62,7 @@ program = "/bin/zsh"
 
 [window]
 decorations = "full"
+opacity=0.95
 
 [window.dimensions]
 columns = 120
@@ -70,3 +71,6 @@ lines = 40
 [window.padding]
 x = 5
 y = 5
+
+[bell]
+command = {program = "pw-play", args = ["~/.local/share/sounds/beep.wav"]}

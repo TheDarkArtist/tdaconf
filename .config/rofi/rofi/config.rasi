@@ -1,6 +1,0 @@
-@theme "/usr/share/rofi/themes/purple.rasi"
-
-configuration {
-    single-click: true;
-}
-

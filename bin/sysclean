@@ -1,86 +1,166 @@
 #!/bin/bash
+# ====================
+# Arch Linux Advanced System Optimizer
+# Author: TheDarkArtist
+# Date: 2025-02-25
+# Purpose: Performance optimization with monitoring
+# ====================
 
-# Requires sudo privileges to execute
+# Terminal colors for better output
+RED='\e[0;31m'
+GREEN='\e[0;32m'
+BLUE='\e[0;34m'
+YELLOW='\e[0;33m'
+NC='\e[0m'
 
-# Send notification
-send_notification() {
-    local title="$1"
-    local message="$2"
-    DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus notify-send "$title" "$message"
+# Strict error checking
+set -euo pipefail
+IFS=$'\n\t'
+
+# Root check with style
+if [[ $EUID -ne 0 ]]; then
+    echo -e "${RED}[!] Need root privileges, mate! Run with sudo${NC}"
+    exit 1
+fi
+
+# Performance monitoring functions
+log_performance() {
+    local before_after=$1
+    echo -e "\n${BLUE}[*] $before_after Performance Metrics:${NC}"
+    echo -e "${YELLOW}[*] Memory Usage:${NC}"
+    free -h
+    echo -e "${YELLOW}[*] Disk Usage:${NC}"
+    df -h /
+    echo -e "${YELLOW}[*] System Load:${NC}"
+    uptime
 }
 
-# Clean package cache
-clean_package_cache() {
-    echo "Cleaning package cache..."
-    sudo pacman -Sc --noconfirm
+# Benchmark function
+benchmark_operation() {
+    local start_time=$(date +%s.%N)
+    "$@"
+    local end_time=$(date +%s.%N)
+    local elapsed=$(echo "$end_time - $start_time" | bc)
+    echo -e "${BLUE}[*] Operation took: ${elapsed} seconds${NC}"
 }
 
-# Remove old journal logs
-clean_journal_logs() {
-    echo "Cleaning journal logs..."
-    sudo journalctl --vacuum-time=2weeks
+# Progress indicator
+show_progress() {
+    echo -e "${GREEN}[+] $1...${NC}"
 }
 
-# Clean user cache
-clean_user_cache() {
-    echo "Cleaning user cache..."
-    [[ -d ~/.cache ]] && rm -rf ~/.cache/* 2>/dev/null
+# Error handler
+handle_error() {
+    echo -e "${RED}[!] Error occurred in operation: $1${NC}"
+    return 1
 }
 
-# Clean temporary files
-clean_temp_files() {
-    echo "Cleaning temporary files..."
-    [[ -d /tmp ]] && sudo rm -rf /tmp/* 2>/dev/null
-    [[ -d /var/tmp ]] && sudo rm -rf /var/tmp/* 2>/dev/null
-}
+# Initial performance check
+show_progress "Initial system status"
+log_performance "Before"
 
-# Remove orphaned packages
-remove_orphaned_packages() {
-    echo "Removing orphaned packages..."
-    if pacman -Qtdq &>/dev/null; then
-        sudo pacman -Rns $(pacman -Qtdq) --noconfirm
-    else
-        echo "No orphaned packages to remove."
-    fi
-}
+# Create cleanup log
+LOG_FILE="/var/log/arch-optimizer.log"
+exec 1> >(tee -a "$LOG_FILE") 2>&1
 
-# Clean system logs
-clean_system_logs() {
-    echo "Cleaning system logs..."
-    sudo find /var/log -type f -name "*.log" -exec truncate -s 0 {} \; 2>/dev/null
-}
+# Advanced package cleanup
+show_progress "Advanced package cleanup"
+benchmark_operation bash << 'EOL'
+    # Remove unused packages and dependencies
+    pacman -Rns $(pacman -Qtdq) 2>/dev/null || true
 
-# Remove unused Docker images and containers
-clean_docker() {
-    if command -v docker &>/dev/null; then
-        echo "Cleaning up Docker images and containers..."
-        docker system prune -af
-    else
-        echo "Docker not installed, skipping."
-    fi
-}
+    # Clean package cache but keep last version
+    paccache -rk1
+    paccache -ruk0
 
-# Empty trash
-empty_trash() {
-    echo "Emptying trash..."
-    [[ -d ~/.local/share/Trash ]] && rm -rf ~/.local/share/Trash/* 2>/dev/null
-}
+    # Remove unused repositories
+    pacman -Sc --noconfirm
+EOL
 
-# Main function to execute all cleanup steps
-main() {
-    clean_package_cache
-    clean_journal_logs
-    clean_user_cache
-    clean_temp_files
-    remove_orphaned_packages
-    clean_system_logs
-    clean_docker
-    empty_trash
+# Aggressive cache cleanup
+show_progress "Aggressive cache cleanup"
+benchmark_operation bash << 'EOL'
+    # System cache
+    sync
+    echo 3 > /proc/sys/vm/drop_caches
 
-    # Send notification
-    send_notification "System Cleanup Completed" "The weekly system cleanup has been successfully completed."
-    echo "System cleanup completed!"
-}
+    # Common cache directories
+    CACHE_DIRS=(
+        "/tmp"
+        "/var/tmp"
+        "/var/cache/pacman/pkg"
+        "/root/.cache"
+        "/home/*/.cache"
+        "/home/*/.thumbnails"
+        "/home/*/.local/share/Trash"
+    )
 
-main
+    for dir in "${CACHE_DIRS[@]}"; do
+        find "$dir" -type f -delete 2>/dev/null || true
+    done
+EOL
 
+# Advanced memory optimization
+show_progress "Memory optimization"
+benchmark_operation bash << 'EOL'
+    # Optimize swap
+    swapoff -a && swapon -a
+
+    # Adjust kernel parameters for better performance
+    sysctl -w vm.swappiness=10
+    sysctl -w vm.vfs_cache_pressure=50
+    sysctl -w vm.dirty_ratio=10
+    sysctl -w vm.dirty_background_ratio=5
+EOL
+
+# Storage optimization
+show_progress "Storage optimization"
+benchmark_operation bash << 'EOL'
+    # TRIM for SSDs
+    fstrim -av 2>/dev/null || true
+
+    # Remove old journals
+    journalctl --vacuum-size=50M
+
+    # Clean logs
+    find /var/log -type f -regex ".*\.[0-9]+.*" -delete
+    find /var/log -type f -name "*.old" -delete
+    find /var/log -type f -name "*.gz" -delete
+
+    # Truncate active logs
+    for log in /var/log/*.log; do
+        truncate -s 0 "$log" 2>/dev/null || true
+    done
+EOL
+
+# System optimization
+show_progress "System optimization"
+benchmark_operation bash << 'EOL'
+    # Remove broken symlinks
+    find / -xtype l -delete 2>/dev/null || true
+
+    # Clean font cache
+    fc-cache -f
+
+    # Update mlocate database
+    updatedb
+
+    # Clean thumbnail cache
+    find /home -type d -name ".thumbnails" -exec rm -rf {} + 2>/dev/null
+EOL
+
+# Final performance check
+show_progress "Final system status"
+log_performance "After"
+
+# Save system info for comparison
+{
+    echo "=== System Information ==="
+    date
+    uname -a
+    pacman -Q | wc -l
+    df -h
+    free -h
+} >> "$LOG_FILE"
+
+echo -e "${GREEN}[✓] Optimization complete! Log saved to $LOG_FILE${NC}"
