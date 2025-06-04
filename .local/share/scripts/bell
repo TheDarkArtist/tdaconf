@@ -1,0 +1,2 @@
+#!/bin/bash
+pw-play /home/tda/.local/share/sounds/beep.wav &

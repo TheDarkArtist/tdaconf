@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
-
+# Configuration sync script with improved error handling and optimization
 # Enable strict error checking
-set -eo pipefail
+set -euo pipefail
 shopt -s inherit_errexit
 
 # Color definitions
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[0;33m'
+readonly BLUE='\033[0;34m'
+readonly NC='\033[0m' # No Color
 
 # Configuration
-REPO_DIR="${REPO_DIR:-$HOME/Workspace/tda/repos/tdaconf}"
-MAX_FILE_LIST=50 # Truncate file list in commit message after this number
+readonly REPO_DIR="${REPO_DIR:-$HOME/Workspace/tda/repos/tdaconf}"
+readonly MAX_FILE_LIST=50 # Truncate file list in commit message after this number
+readonly SCRIPT_NAME=$(basename "$0")
 
 # Initialize variables
 DRY_RUN=false
@@ -28,7 +29,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 # Show usage information
 usage() {
   cat <<EOF
-Usage: $0 [OPTIONS]
+Usage: $SCRIPT_NAME [OPTIONS]
 
 Sync configuration files to Git repository
 
@@ -36,121 +37,282 @@ Options:
   -d, --dry-run    Show what would be done without making changes
   -v, --verbose    Show detailed output
   -h, --help       Show this help message
+
+Environment Variables:
+  REPO_DIR         Target repository directory (default: $HOME/Workspace/tda/repos/tdaconf)
+
+Examples:
+  $SCRIPT_NAME                    # Normal sync
+  $SCRIPT_NAME --dry-run          # Preview changes
+  $SCRIPT_NAME --verbose --dry-run # Detailed preview
 EOF
 }
 
 # Parse command-line arguments
-while [[ $# -gt 0 ]]; do
-  case $1 in
-  -d | --dry-run)
-    DRY_RUN=true
-    shift
-    ;;
-  -v | --verbose)
-    VERBOSE=true
-    shift
-    ;;
-  -h | --help)
-    usage
-    exit 0
-    ;;
-  *)
-    log_error "Unknown option: $1"
-    usage
-    exit 1
-    ;;
-  esac
-done
+parse_arguments() {
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+    -d | --dry-run)
+      DRY_RUN=true
+      shift
+      ;;
+    -v | --verbose)
+      VERBOSE=true
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      log_error "Unknown option: $1"
+      usage
+      exit 1
+      ;;
+    esac
+  done
+}
 
 # Validate Git repository
 validate_repo() {
-  (
-    cd "$REPO_DIR" || exit 1
-    if ! git rev-parse --is-inside-work-tree &>/dev/null; then
-      log_error "Not a Git repository: $REPO_DIR"
-      return 1
-    fi
-  )
-}
-
-# Sync files using rsync
-sync_files() {
-  local src=$1
-  local dest=$2
-
-  if [[ ! -e $src ]]; then
-    log_warn "Source not found: $src"
+  if [[ ! -d "$REPO_DIR" ]]; then
+    log_error "Repository directory does not exist: $REPO_DIR"
     return 1
   fi
 
-  local rsync_opts=(-a --checksum --delete)
-  $VERBOSE && rsync_opts+=(-v)
-  $DRY_RUN && rsync_opts+=(-n)
+  if ! (cd "$REPO_DIR" && git rev-parse --is-inside-work-tree &>/dev/null); then
+    log_error "Not a Git repository: $REPO_DIR"
+    return 1
+  fi
 
-  log_info "Syncing $src → $dest"
-  rsync "${rsync_opts[@]}" "$src" "$dest"
+  # Check if we can write to the repository
+  if [[ ! -w "$REPO_DIR" ]]; then
+    log_error "No write permission for repository: $REPO_DIR"
+    return 1
+  fi
+
+  return 0
+}
+
+# Check if Git working directory is clean (for safety)
+check_git_status() {
+  local untracked_files
+  if ! (cd "$REPO_DIR" && git diff --quiet --exit-code); then
+    log_warn "Repository has uncommitted changes"
+    return 1
+  fi
+
+  untracked_files=$(cd "$REPO_DIR" && git ls-files --others --exclude-standard | wc -l)
+  if [[ $untracked_files -gt 0 ]]; then
+    log_warn "Repository has $untracked_files untracked files"
+  fi
+
+  return 0
+}
+
+# Create necessary directory structure
+create_directories() {
+  local dirs=(
+    "$REPO_DIR/.config"
+    "$REPO_DIR/.local/share"
+    "$REPO_DIR/bin"
+  )
+
+  for dir in "${dirs[@]}"; do
+    if [[ ! -d "$dir" ]]; then
+      if $DRY_RUN; then
+        log_info "Would create directory: $dir"
+      else
+        mkdir -p "$dir" || {
+          log_error "Failed to create directory: $dir"
+          return 1
+        }
+        $VERBOSE && log_info "Created directory: $dir"
+      fi
+    fi
+  done
+}
+
+# Sync files using rsync with improved error handling
+sync_files() {
+  local src="$1"
+  local dest="$2"
+  local rsync_opts=(-a --checksum --delete)
+
+  # Validate source exists
+  if [[ ! -e "$src" ]]; then
+    log_warn "Source not found, skipping: $src"
+    return 0
+  fi
+
+  # Add verbose flag if requested
+  $VERBOSE && rsync_opts+=(--verbose)
+
+  # Add dry-run flag if requested
+  $DRY_RUN && rsync_opts+=(--dry-run)
+
+  # Add human-readable progress for directories
+  if [[ -d "$src" ]]; then
+    rsync_opts+=(--human-readable --progress)
+  fi
+
+  log_info "Syncing: $src → $dest"
+
+  if ! rsync "${rsync_opts[@]}" "$src" "$dest"; then
+    log_error "Failed to sync: $src → $dest"
+    return 1
+  fi
+
+  return 0
+}
+
+# Define source mappings
+get_source_mappings() {
+  declare -gA SOURCES=(
+    ["$HOME/.config/i3"]="$REPO_DIR/.config/"
+    ["$HOME/.config/polybar"]="$REPO_DIR/.config/"
+    ["$HOME/.config/rofi"]="$REPO_DIR/.config/"
+    ["$HOME/.config/nvim"]="$REPO_DIR/.config/"
+    ["$HOME/.config/alacritty"]="$REPO_DIR/.config/"
+    ["$HOME/.local/share/scripts"]="$REPO_DIR/.local/share/"
+    ["$HOME/.local/share/sounds"]="$REPO_DIR/.local/share/"
+    ["$HOME/.local/share/wallpapers"]="$REPO_DIR/.local/share/"
+    ["$HOME/bin"]="$REPO_DIR/"
+    ["$HOME/.zshrc"]="$REPO_DIR/"
+    ["$HOME/.zsh_aliases"]="$REPO_DIR/"
+    ["$HOME/.profile"]="$REPO_DIR/"
+    ["$HOME/.xprofile"]="$REPO_DIR/"
+    ["$HOME/.xinitrc"]="$REPO_DIR/"
+  )
+}
+
+# Perform Git operations
+git_operations() {
+  local changed_files
+  local file_count
+  local commit_message
+
+  cd "$REPO_DIR" || {
+    log_error "Failed to change to repository directory"
+    return 1
+  }
+
+  # Check if there are any changes
+  if git diff --quiet && git diff --cached --quiet; then
+    log_success "No changes to commit"
+    return 0
+  fi
+
+  # Get list of changed files
+  changed_files=$(git diff --name-only HEAD 2>/dev/null | head -"$MAX_FILE_LIST" | tr '\n' ' ')
+  file_count=$(git diff --name-only HEAD 2>/dev/null | wc -l)
+
+  # Add ellipsis if there are more files than the limit
+  if [[ $file_count -gt $MAX_FILE_LIST ]]; then
+    changed_files+="... ($((file_count - MAX_FILE_LIST)) more)"
+  fi
+
+  # Create commit message
+  commit_message="Config update: $(date +'%Y-%m-%d %H:%M:%S')"
+  [[ -n "$changed_files" ]] && commit_message+=" - Files: $changed_files"
+
+  if $DRY_RUN; then
+    log_success "Would commit changes with message:"
+    echo -e "${BLUE}$commit_message${NC}"
+    echo
+    log_info "Git status:"
+    git status --short
+    echo
+    log_info "Would push to origin/main"
+  else
+    log_info "Committing changes..."
+    git add . || {
+      log_error "Failed to stage changes"
+      return 1
+    }
+
+    git commit -m "$commit_message" || {
+      log_error "Failed to commit changes"
+      return 1
+    }
+
+    log_info "Pushing to origin/main..."
+    if git push origin main; then
+      log_success "Changes pushed successfully"
+    else
+      log_error "Failed to push changes"
+      return 1
+    fi
+  fi
+
+  return 0
+}
+
+# Main synchronization function
+sync_all_files() {
+  local failed_syncs=0
+
+  get_source_mappings
+
+  log_info "Starting file synchronization..."
+
+  for source in "${!SOURCES[@]}"; do
+    if ! sync_files "$source" "${SOURCES[$source]}"; then
+      ((failed_syncs++))
+    fi
+  done
+
+  if [[ $failed_syncs -gt 0 ]]; then
+    log_warn "$failed_syncs file sync(s) failed"
+    return 1
+  fi
+
+  log_success "All files synchronized successfully"
+  return 0
+}
+
+# Cleanup function for proper exit
+cleanup() {
+  local exit_code=$?
+  if [[ $exit_code -ne 0 ]]; then
+    log_error "Script failed with exit code $exit_code"
+  fi
+  exit $exit_code
 }
 
 # Main function
 main() {
-  # Create directory structure if needed
-  mkdir -p "$REPO_DIR/.config" "$REPO_DIR/.local/share" "$REPO_DIR/bin"
+  # Set up cleanup trap
+  trap cleanup EXIT
 
-  declare -A SOURCES=(
-    ["$HOME/.config/i3"]="$REPO_DIR/.config"
-    ["$HOME/.config/polybar"]="$REPO_DIR/.config"
-    ["$HOME/.config/rofi"]="$REPO_DIR/.config"
-    ["$HOME/.local/share/scripts"]="$REPO_DIR/.local/share"
-    ["$HOME/.local/share/sounds"]="$REPO_DIR/.local/share"
-    ["$HOME/.local/share/wallpapers/"]="$REPO_DIR/.local/share"
-    ["$HOME/.config/nvim"]="$REPO_DIR/.config"
-    ["$HOME/.config/alacritty"]="$REPO_DIR/.config"
-    ["$HOME/bin"]="$REPO_DIR"
-    ["$HOME/.zshrc"]="$REPO_DIR"
-    ["$HOME/.zsh_aliases"]="$REPO_DIR"
-    ["$HOME/.profile"]="$REPO_DIR"
-    ["$HOME/.xprofile"]="$REPO_DIR"
-    ["$HOME/.xinitrc"]="$REPO_DIR"
-  )
+  parse_arguments "$@"
 
-  # Sync all sources
-  for source in "${!SOURCES[@]}"; do
-    sync_files "$source" "${SOURCES[$source]}"
-  done
-
-  # Git operations
-  (
-    cd "$REPO_DIR" || exit 1
-
-    if ! git diff --quiet; then
-      changed_files=$(git diff --name-only | head -$MAX_FILE_LIST | tr '\n' ' ')
-      [[ $(git diff --name-only | wc -l) -gt $MAX_FILE_LIST ]] && changed_files+=" ..."
-
-      commit_message="Config update: $(date +"%Y-%m-%d %H:%M:%S")"
-      [[ -n $changed_files ]] && commit_message+=" - Changed: $changed_files"
-
-      if $DRY_RUN; then
-        log_success "Would commit changes:"
-        echo -e "${BLUE}$commit_message${NC}"
-        git status --short
-      else
-        git add .
-        git commit -m "$commit_message"
-        git push origin main
-        log_success "Changes pushed successfully"
-      fi
-    else
-      log_success "No changes to commit"
-    fi
-  )
-}
-
-# Run main program
-if validate_repo; then
   if $DRY_RUN; then
     log_info "Running in dry-run mode - no changes will be made"
   fi
-  main
-else
-  exit 1
-fi
+
+  $VERBOSE && log_info "Repository directory: $REPO_DIR"
+
+  # Validation steps
+  validate_repo || return 1
+
+  if ! $DRY_RUN; then
+    check_git_status || {
+      log_warn "Continuing despite Git status warnings..."
+    }
+  fi
+
+  # Create necessary directories
+  create_directories || return 1
+
+  # Perform file synchronization
+  sync_all_files || return 1
+
+  # Perform Git operations
+  git_operations || return 1
+
+  log_success "Configuration sync completed successfully"
+}
+
+# Run main program with all arguments
+main "$@"
