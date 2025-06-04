@@ -170,6 +170,7 @@ sync_files() {
 get_source_mappings() {
   declare -gA SOURCES=(
     ["$HOME/.config/i3"]="$REPO_DIR/.config/"
+    ["$HOME/.config/picom.conf"]="$REPO_DIR/.config/"
     ["$HOME/.config/polybar"]="$REPO_DIR/.config/"
     ["$HOME/.config/rofi"]="$REPO_DIR/.config/"
     ["$HOME/.config/nvim"]="$REPO_DIR/.config/"
