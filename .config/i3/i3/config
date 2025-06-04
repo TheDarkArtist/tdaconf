@@ -189,7 +189,6 @@ bindsym $alt+Shift+9 move container to workspace number $ws9
 bindsym $alt+Shift+0 move container to workspace number $ws10
 
 # Workspace assignments
-assign [class="librewolf"] $ws3
 assign [class="code-oss"] $ws1
 assign [class="discord"] $ws9
 assign [class="Virt-manager"] $ws8

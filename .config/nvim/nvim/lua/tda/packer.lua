@@ -5,11 +5,16 @@ return require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
 
 	-- File Explorer and Navigation
+	-- use({
+	-- 	"nvim-tree/nvim-tree.lua", -- File explorer
+	-- 	requires = {
+	-- 		"nvim-tree/nvim-web-devicons", -- File icons for better visuals
+	-- 	},
+	-- })
+
 	use({
-		"nvim-tree/nvim-tree.lua", -- File explorer
-		requires = {
-			"nvim-tree/nvim-web-devicons", -- File icons for better visuals
-		},
+		"stevearc/oil.nvim",
+		requires = { "nvim-tree/nvim-web-devicons" },
 	})
 
 	-- Fuzzy Finder
@@ -76,10 +81,17 @@ return require("packer").startup(function(use)
 
 	-- Markdown Support
 	use({
-		"iamcco/markdown-preview.nvim", -- Markdown preview
-		run = "cd app && bun install",
+		"iamcco/markdown-preview.nvim",
+		run = function()
+			vim.fn["mkdp#util#install"]()
+		end,
+	})
+	use({
+		"iamcco/markdown-preview.nvim",
+		run = "cd app && npm install",
 		setup = function()
 			vim.g.mkdp_filetypes = { "markdown" }
+			vim.g.mkdp_echo_preview_url = 1
 		end,
 		ft = { "markdown" },
 	})
@@ -138,6 +150,5 @@ return require("packer").startup(function(use)
 
 	-- use("Exafunction/codeium.vim")
 
-  use("stevearc/conform.nvim")
-
+	use("stevearc/conform.nvim")
 end)

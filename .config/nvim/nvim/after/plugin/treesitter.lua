@@ -7,6 +7,7 @@ require("nvim-treesitter.configs").setup({
     "javascript", -- For JavaScript development
     "typescript", -- For TypeScript development
     "c",          -- For C programming (low-level systems)
+    "cpp",
     "lua",        -- For Lua scripting (Neovim configuration/plugins)
     "rust",       -- For Rust programming (modern systems programming)
   },
