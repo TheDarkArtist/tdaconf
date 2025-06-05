@@ -79,7 +79,7 @@ exec --no-startup-id blueman-applet
 exec --no-startup-id /usr/lib/xfce4/notifyd/xfce4-notifyd &
 exec --no-startup-id clipmenud
 exec --no-startup-id lxpolkit
-exec --no-startup-id nm-applet
+# exec --no-startup-id nm-applet
 exec --no-startup-id protonvpn-app
 exec --no-startup-id simplescreenrecorder --start-hidden
 # exec --no-startup-id aw-qt --no-gui

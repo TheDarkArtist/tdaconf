@@ -61,7 +61,7 @@ return require("packer").startup(function(use)
   -- use("theprimeagen/refactoring.nvim") -- Refactoring utilities
 
   -- Git Integration
-  -- use("tpope/vim-fugitive") -- Git commands within Neovim
+  use("tpope/vim-fugitive") -- Git commands within Neovim
 
   -- Trouble List
   -- use("folke/trouble.nvim") -- Pretty diagnostics list

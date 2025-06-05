@@ -200,6 +200,11 @@ _G.packer_plugins = {
     path = "/home/tda/.local/share/nvim/site/pack/packer/start/vim-commentary",
     url = "https://github.com/tpope/vim-commentary"
   },
+  ["vim-fugitive"] = {
+    loaded = true,
+    path = "/home/tda/.local/share/nvim/site/pack/packer/start/vim-fugitive",
+    url = "https://github.com/tpope/vim-fugitive"
+  },
   ["vim-gas"] = {
     loaded = true,
     path = "/home/tda/.local/share/nvim/site/pack/packer/start/vim-gas",
