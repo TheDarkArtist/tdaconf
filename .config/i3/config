@@ -56,7 +56,7 @@ set $green600 #16a34a
 font pango:JetBrainsMono Nerd Font 10
 
 # Window Colors
-client.focused          $bg-color           $sky600           $text-color           #00ff00
+# client.focused          $bg-color           $sky600           $text-color           #00ff00
 # client.unfocused        $inactive-bg-color  $inactive-bg-color  $inactive-text-color  #00ff00
 # client.focused_inactive $inactive-bg-color  $inactive-bg-color  $inactive-text-color  #00ff00
 # client.urgent           $urgent-bg-color    $urgent-bg-color    $text-color           #00ff00
@@ -67,7 +67,7 @@ gaps inner 0
 gaps outer 0
 smart_gaps on
 smart_borders on
-default_border pixel 1
+default_border normal 1
 
 ###################
 # Startup Applications
