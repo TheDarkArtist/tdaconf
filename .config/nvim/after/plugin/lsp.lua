@@ -1,7 +1,8 @@
+-- Safe require for lsp-zero
 local ok_lsp, lsp = pcall(require, "lsp-zero")
 if not ok_lsp then return end
 
-lsp.on_attach(function(client, bufnr)
+lsp.on_attach(function(_, bufnr)
   local opts = { buffer = bufnr, remap = false }
 
   vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
@@ -93,6 +94,7 @@ cmp.setup({
   window = {
     completion = cmp.config.window.bordered(),
     documentation = cmp.config.window.bordered(),
+    hover = cmp.config.window.bordered(),
   },
 
   experimental = {
@@ -115,9 +117,11 @@ vim.diagnostic.config({
   },
 })
 
--- Diagnostic signs
-local signs = { Error = "E", Warn = "W", Hint = "H", Info = "I" }
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-end
+vim.schedule(function()
+  local orig_floating = vim.lsp.util.open_floating_preview
+  function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+    opts = opts or {}
+    opts.border = opts.border or "rounded"
+    return orig_floating(contents, syntax, opts, ...)
+  end
+end)
