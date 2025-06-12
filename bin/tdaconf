@@ -184,6 +184,7 @@ get_source_mappings() {
     ["$HOME/.profile"]="$REPO_DIR/"
     ["$HOME/.xprofile"]="$REPO_DIR/"
     ["$HOME/.xinitrc"]="$REPO_DIR/"
+    ["$HOME/.tmux.conf"]="$REPO_DIR/"
   )
 }
 

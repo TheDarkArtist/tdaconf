@@ -1,10 +1,8 @@
--- Safe require for lsp-zero
 local ok_lsp, lsp = pcall(require, "lsp-zero")
 if not ok_lsp then return end
 
 lsp.on_attach(function(_, bufnr)
   local opts = { buffer = bufnr, remap = false }
-
   vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
   vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
   vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
@@ -36,7 +34,6 @@ if ok_mason_lspconfig then
     },
     handlers = {
       lsp.default_setup,
-
       lua_ls = function()
         local lua_opts = lsp.nvim_lua_ls()
         local ok_lspconfig, lspconfig = pcall(require, "lspconfig")
@@ -55,12 +52,15 @@ if not ok_cmp then return end
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
 cmp.setup({
+  -- completion = {
+  --   autocomplete = { cmp.TriggerEvent.TextChanged }, -- uncomment to enable autocomplete
+  --   completeopt = 'menu,menuone,noinsert',
+  -- },
   completion = {
     autocomplete = false,
     completeopt = 'menu,menuone,noinsert',
   },
   preselect = cmp.PreselectMode.Item,
-
   sources = {
     { name = 'nvim_lsp', priority = 1000 },
     { name = 'luasnip',  priority = 750 },
@@ -68,20 +68,17 @@ cmp.setup({
     { name = 'path',     priority = 250 },
     { name = 'nvim_lua' },
   },
-
   formatting = lsp.cmp_format({ details = true }),
-
   mapping = {
     ['<C-p>']     = cmp.mapping.select_prev_item(cmp_select),
     ['<C-n>']     = cmp.mapping.select_next_item(cmp_select),
-    ['<CR>']      = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+    ['<CR>']      = cmp.mapping.confirm({ select = true }),
     ['<C-y>']     = cmp.mapping.confirm({ select = true }),
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>']     = cmp.mapping.abort(),
     ['<C-u>']     = cmp.mapping.scroll_docs(-4),
     ['<C-d>']     = cmp.mapping.scroll_docs(4),
   },
-
   snippet = {
     expand = function(args)
       local ok_luasnip, luasnip = pcall(require, "luasnip")
@@ -90,17 +87,20 @@ cmp.setup({
       end
     end,
   },
-
   window = {
     completion = cmp.config.window.bordered(),
     documentation = cmp.config.window.bordered(),
-    hover = cmp.config.window.bordered(),
   },
-
   experimental = {
     ghost_text = false,
   },
 })
+
+-- Load VSCode-style snippets
+local ok_luasnip, luasnip = pcall(require, "luasnip")
+if ok_luasnip then
+  require("luasnip.loaders.from_vscode").lazy_load()
+end
 
 -- Diagnostics config
 vim.diagnostic.config({
