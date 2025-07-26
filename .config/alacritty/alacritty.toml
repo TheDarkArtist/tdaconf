@@ -74,3 +74,11 @@ y = 5
 
 [bell]
 command = {program = "pw-play", args = ["~/.local/share/sounds/beep.wav"]}
+duration=1
+animation="EaseOut"
+
+[keyboard]
+bindings = [
+  { key = "Backspace", mods = "Control", chars = "\u0017" }
+]
+

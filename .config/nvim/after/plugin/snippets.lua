@@ -1,4 +1,0 @@
--- local ok_luasnip, luasnip = pcall(require, "luasnip")
--- if ok_luasnip then
---   require("luasnip.loaders.from_vscode").lazy_load()
--- end

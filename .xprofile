@@ -6,3 +6,5 @@ export TERMINAL=alacritty
 xrandr --output HDMI-0 --primary --scale 1.35x1.35 --mode 1920x1080 --rate 60 &
 
 xfce4-power-manager --sm-client-disable --daemon &
+
+redshift-gtk &

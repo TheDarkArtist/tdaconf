@@ -208,9 +208,11 @@ bindsym $mod+Ctrl+Escape xkill
 bindsym $mod+p exec --no-startup-id pavucontrol
 bindsym $mod+c exec ~/.local/share/scripts/bluetooth
 bindsym Print exec ~/.local/share/scripts/screenshot
-bindsym F8 exec alacritty -e ranger
 bindsym $mod+s exec flameshot screen
 bindsym $mod+Shift+s exec flameshot gui
+
+bindsym F8 exec alacritty -e ranger
+bindsym F9 exec ~/.local/share/scripts/timer.sh toggle
 
 
 

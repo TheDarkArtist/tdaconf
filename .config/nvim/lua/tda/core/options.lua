@@ -1,3 +1,9 @@
+-- Editor options
+vim.g.netrw_browse_split = 0
+vim.g.netrw_banner = 0
+vim.g.netrw_winsize = 25
+vim.g.mkdp_echo_preview_url = 1
+
 vim.opt.guicursor = "v-c:block,i:ver25"
 
 vim.opt.nu = true
@@ -33,6 +39,10 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
 
--- vim.g.loaded_netrwPlugin = 1
+-- vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 vim.cmd("highlight VertSplit guifg=#c0c0c0 guibg=NONE")
+
+vim.cmd("colorscheme carbonfox")
+
