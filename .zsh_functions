@@ -1,0 +1,4 @@
+copy_file() {
+  printf "file://%s\n" "$(realpath "$1")" | xclip -selection clipboard -t text/uri-list
+}
+

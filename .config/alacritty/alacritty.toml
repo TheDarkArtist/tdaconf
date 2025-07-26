@@ -23,7 +23,7 @@ white = "0xfcfcfc"
 yellow = "0xf67400"
 
 [colors.primary]
-background = "0x0a0a0d"
+background = "0x000000"
 foreground = "0xfcfcfc"
 
 [colors.selection]
@@ -62,7 +62,7 @@ program = "/bin/zsh"
 
 [window]
 decorations = "full"
-opacity=0.95
+opacity=0.90
 
 [window.dimensions]
 columns = 120

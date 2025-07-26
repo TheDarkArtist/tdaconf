@@ -67,7 +67,7 @@ gaps inner 0
 gaps outer 0
 smart_gaps on
 smart_borders on
-default_border normal 1
+default_border normal 4
 
 ###################
 # Startup Applications

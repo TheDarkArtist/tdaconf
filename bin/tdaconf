@@ -180,6 +180,7 @@ get_source_mappings() {
     ["$HOME/.local/share/wallpapers"]="$REPO_DIR/.local/share/"
     ["$HOME/bin"]="$REPO_DIR/"
     ["$HOME/.zshrc"]="$REPO_DIR/"
+    ["$HOME/.zsh_functions"]="$REPO_DIR/"
     ["$HOME/.zsh_aliases"]="$REPO_DIR/"
     ["$HOME/.profile"]="$REPO_DIR/"
     ["$HOME/.xprofile"]="$REPO_DIR/"
