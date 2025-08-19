@@ -70,7 +70,7 @@ lines = 40
 
 [window.padding]
 x = 5
-y = 5
+y = 8
 
 [bell]
 command = {program = "pw-play", args = ["~/.local/share/sounds/beep.wav"]}
@@ -79,6 +79,9 @@ animation="EaseOut"
 
 [keyboard]
 bindings = [
-  { key = "Backspace", mods = "Control", chars = "\u0017" }
+  { key = "Backspace", mods = "Control", chars = "\u0017" },
+  { key = "[", mods = "Control", action = "ToggleViMode" },
+  { key = "Y", mods = "Control", action = "Copy" },
+  { key = ";", mods = "Control", action = "Paste" },
 ]
 

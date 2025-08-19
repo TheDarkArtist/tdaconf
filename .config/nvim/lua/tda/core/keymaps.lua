@@ -108,3 +108,14 @@ vim.api.nvim_set_keymap("n", "<leader>rc", ":Cargo run<CR>", { noremap = true })
 
 -- Show diagnostics float
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostics float" })
+
+vim.keymap.set("n", "<leader>z", function()
+	local full = vim.api.nvim_buf_get_name(0)
+	local cwd = vim.fn.getcwd()
+	if not full:find(cwd, 1, true) then
+		return
+	end
+	local rel = full:sub(#cwd + 2)
+	vim.fn.setreg("+", rel)
+	vim.api.nvim_echo({ { "Copied path: " .. rel, "None" } }, false, {})
+end, { desc = "Copy relative path to clipboard", silent = true })

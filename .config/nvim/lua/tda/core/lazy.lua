@@ -72,4 +72,8 @@ require("lazy").setup({
 			require("nvim-autopairs").setup({})
 		end,
 	},
+
+	{
+		"augmentcode/augment.vim",
+	},
 })

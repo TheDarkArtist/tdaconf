@@ -1,4 +1,10 @@
-copy_file() {
-  printf "file://%s\n" "$(realpath "$1")" | xclip -selection clipboard -t text/uri-list
+# cf() {
+#   printf "file://%s\n" "$(realpath "$1")" | xclip -selection clipboard -t text/uri-list
+# }
+
+cf() {
+  for f in "$@"; do
+    [ -e "$f" ] && echo "file://$(realpath -- "$f")"
+  done | xclip -selection clipboard -t text/uri-list
 }
 
