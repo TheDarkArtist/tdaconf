@@ -12,7 +12,7 @@ readonly BLUE='\033[0;34m'
 readonly NC='\033[0m' # No Color
 
 # Configuration
-readonly REPO_DIR="${REPO_DIR:-$HOME/Workspace/tda/repos/tdaconf}"
+readonly REPO_DIR="${REPO_DIR:-$HOME/Workspace/tdaconf}"
 readonly MAX_FILE_LIST=50 # Truncate file list in commit message after this number
 readonly SCRIPT_NAME=$(basename "$0")
 
@@ -39,7 +39,7 @@ Options:
   -h, --help       Show this help message
 
 Environment Variables:
-  REPO_DIR         Target repository directory (default: $HOME/Workspace/tda/repos/tdaconf)
+  REPO_DIR         Target repository directory (default: $HOME/Workspace/tdaconf)
 
 Examples:
   $SCRIPT_NAME                    # Normal sync

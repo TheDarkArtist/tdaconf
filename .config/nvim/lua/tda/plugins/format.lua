@@ -14,6 +14,7 @@ conform.setup({
 		json = { "prettier" },
 		markdown = { "prettier" },
 		sh = { "shfmt" },
+		css = { "prettier" },
 		-- add more as needed
 	},
 

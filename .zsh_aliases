@@ -2,7 +2,7 @@
 alias c="clear"
 alias cd..="cd .."
 alias curl="curl --user-agent 'noleak'"
-alias l="lsd -hl --color=auto"
+alias l="lsd -1 --color=auto"
 alias la="lsd -ah --color=auto"
 alias ll="lsd -ahl --color=auto"
 alias r="reset"
@@ -26,7 +26,8 @@ alias du="du -h"
 alias gwen="gwenview"
 alias ff="fastfetch"
 alias cdp='cd ${(e)PRJ}'
-alias cdw='cd ~/Workspace/work/eshkon/'
+alias cdw='cd ~/Workspace/work/eshkon/altus/projects/v3/17.studio'
+alias cdc='cd ~/Workspace/tdacorp'
 alias pm="podman"
 alias .2="watch --interval=.2"
 alias gpp="git switch prod; git merge dev; git push; git switch dev; git push"
@@ -34,3 +35,4 @@ alias brd="bun run dev"
 alias trd="turbo run dev"
 alias copy="xclip -selection clipboard"
 alias code="vscodium"
+alias open="xdg-open"

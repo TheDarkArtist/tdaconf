@@ -76,4 +76,16 @@ require("lazy").setup({
 	{
 		"augmentcode/augment.vim",
 	},
+
+	{ "CRAG666/code_runner.nvim", config = true },
+
+	{
+		"lowitea/aw-watcher.nvim",
+		opts = {
+			aw_server = {
+				host = "127.0.0.1",
+				port = 5600,
+			},
+		},
+	},
 })

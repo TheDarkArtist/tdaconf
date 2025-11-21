@@ -76,14 +76,15 @@ default_floating_border pixel 1
 ###################
 # System
 exec --no-startup-id dex --autostart --environment i3
-exec --no-startup-id blueman-applet
+exec --no-startup-id xset +dpms
+# exec --no-startup-id blueman-applet
 # exec --no-startup-id dunst
 exec --no-startup-id /usr/lib/xfce4/notifyd/xfce4-notifyd &
-exec --no-startup-id clipmenud
+# exec --no-startup-id clipmenud
 exec --no-startup-id lxpolkit
 # exec --no-startup-id nm-applet
-exec --no-startup-id protonvpn-app
-exec --no-startup-id simplescreenrecorder --start-hidden
+# exec --no-startup-id protonvpn-app
+# exec --no-startup-id simplescreenrecorder --start-hidden
 # exec --no-startup-id aw-qt --no-gui
 
 # for some reason it is not required it just runs automatically
@@ -94,7 +95,7 @@ exec --no-startup-id simplescreenrecorder --start-hidden
 # bindsym $mod+t exec --no-startup-id "transset-df -a --min 0.6 --inc 0.1"
 
 # Aesthetics
-exec --no-startup-id feh --bg-scale /home/tda/.local/share/wallpapers/arch-minimal-wallpapers/wallpapers/full-hd/dark-grey.png
+exec --no-startup-id feh --bg-scale /home/tda/.local/share/wallpapers/wf-1.jpg
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 ###################
@@ -125,6 +126,7 @@ for_window [class="pavucontrol"] floating enable
 for_window [class="nm-connection-editor"] floating enable
 for_window [class="feh"] floating enable
 for_window [class="Blueman-manager"] floating enable
+for_window [class="Bitwarden"] floating enable
 # for_window [class="xfce4-panel"] floating enable
 for_window [class="Gpick"] floating enable
 for_window [class="Device Manager"] floating enable
@@ -193,6 +195,7 @@ bindsym $alt+Shift+0 move container to workspace number $ws10
 # Workspace assignments
 assign [class="VSCodium"] $ws9
 assign [class="discord"] $ws9
+assign [class="obsidian"] $ws7
 assign [class="Virt-manager"] $ws8
 assign [class="SimpleScreenRecorder"] $ws8
 
@@ -200,6 +203,7 @@ assign [class="SimpleScreenRecorder"] $ws8
 # Application Shortcuts
 ###################
 bindsym $alt+Return exec i3-sensible-terminal
+# bindsym $mod+Return exec NO_TMUX=1 alacritty
 bindsym $mod+space exec --no-startup-id rofi -show drun
 bindsym $mod+1 exec thunar
 bindsym $mod+2 exec librewolf
@@ -214,10 +218,12 @@ bindsym Print exec ~/.local/share/scripts/screenshot
 bindsym $mod+s exec flameshot screen
 bindsym $mod+Shift+s exec flameshot gui
 bindsym $mod+period exec "rofimoji --action copy --clipboarder xclip"
-
+bindsym $mod+u exec ~/.local/share/scripts/unicode-select
 
 bindsym F8 exec alacritty -e ranger
 bindsym F9 exec ~/.local/share/scripts/timer.sh toggle
+
+
 
 
 
@@ -230,14 +236,14 @@ bindsym $alt+Shift+r restart
 # bindsym $alt+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 # bindsym $alt+Shift+e exec ~/.local/share/scripts/powermenu
 # Lock Screen
-bindsym $mod+l exec i3lock -i /home/tda/.local/share/wallpapers/ba-2.png -b -e -f -k --date-size=50 --time-size=120 --time-pos="1350:320" --date-pos="1357:400" --time-color=FFFFFFFF --date-color=FFFFFFFF --ind-pos="2560:1400"
+# bindsym $mod+l exec i3lock -i /home/tda/.local/share/wallpapers/ba-2.png -b -e -f -k --date-size=50 --time-size=120 --time-pos="1350:320" --date-pos="1357:400" --time-color=FFFFFFFF --date-color=FFFFFFFF --ind-pos="2560:1400"
 # Pick color and copy to clipboard
 bindsym $mod+Shift+p exec gpick -p -o
 
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown, (b) off-screen
 
 mode "$mode_system" {
-    bindsym l exec --no-startup-id exec i3lock -i /home/tda/.local/share/wallpapers/ba-2.png -b -e -f -k --date-size=50 --time-size=120 --time-pos="1350:320" --date-pos="1357:400" --time-color=FFFFFFFF --date-color=FFFFFFFF --ind-pos="2560:1400"
+    bindsym l exec --no-startup-id exec xsecurelock, mode "default"
     bindsym e exec --no-startup-id i3-msg exit, mode "default"
     bindsym s exec --no-startup-id $Locker && systemctl suspend, mode "default"
     bindsym h exec --no-startup-id $Locker && systemctl hibernate, mode "default"

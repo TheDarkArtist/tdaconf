@@ -5,6 +5,10 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# if command -v tmux >/dev/null 2>&1; then
+#   [ -z "$TMUX" ] && [ -z "$NO_TMUX" ] && exec tmux
+# fi
+
 # Load colours and then set fallback prompt
 # Prompt preview:
 # [user@hostname]-[~]
@@ -15,7 +19,7 @@ PS1="%{$fg[blue]%}%B[%b%{$fg[cyan]%}%n%{$fg[grey]%}%B@%b%{$fg[cyan]%}%m%{$fg[blu
 
 # ZSH history file
 HISTSIZE=100
-SAVEHIST=100
+SAVEHIST=1000
 HISTFILE=~/.zsh_history
 
 # Fancy auto-complete
@@ -84,7 +88,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PRJ="/home/tda/Workspace/Projects/tda-merch/."
+export PRJ="/home/tda/Workspace/Projects/tda/."
 
 export TERMINAL=alacritty
 export ANDROID_HOME="$HOME/Development/Android/Sdk"
@@ -92,6 +96,8 @@ export NDK_HOME="$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)"
 export GOPATH=$HOME/Development/go
 export PATH="/home/tda/.bun/bin:$PATH"
 export CAPACITOR_ANDROID_STUDIO_PATH="/sbin/android-studio"
+export BW_SESSION="28uDU87zljYm+t8ImmILcgRr+ff/Zr4AXCNQzpSXC8PSnniRK7d4Pamd5SlXa2zb80xSAxpYowD2SnbnrbhrCw=="
+export CHROME_EXECUTABLE='/sbin/chromium'
 
 # pnpm
 export PNPM_HOME="/home/tda/.local/share/pnpm"
@@ -100,3 +106,5 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+source /home/tda/.config/broot/launcher/bash/br

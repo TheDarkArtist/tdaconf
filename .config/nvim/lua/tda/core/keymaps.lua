@@ -77,10 +77,10 @@ vim.keymap.set("n", "<leader>c", ":Commentary<CR>", { noremap = true, silent = t
 vim.keymap.set("v", "<leader>c", ":Commentary<CR>", { noremap = true, silent = true })
 
 -- Window navigation (minimal, using leader+lh/lj/ll/lk)
-vim.keymap.set("n", "<leader>lh", "<C-w>h", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>lj", "<C-w>j", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>lk", "<C-w>k", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>ll", "<C-w>l", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>H", "<C-w>h", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>J", "<C-w>j", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>K", "<C-w>k", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>L", "<C-w>l", { noremap = true, silent = true })
 
 -- New tab
 vim.keymap.set("n", "<A-t>", function()
@@ -103,7 +103,7 @@ vim.keymap.set("n", "<Leader>tq", "<cmd>TodoTelescope<CR>", { noremap = true, si
 vim.api.nvim_set_keymap("n", "<S-u>", "<C-r>", { noremap = true, silent = true })
 
 -- Rust: run code and cargo (if plugins installed)
-vim.api.nvim_set_keymap("n", "<leader>rr", ":RustRun<CR>", { noremap = true })
+-- vim.api.nvim_set_keymap("n", "<leader>rr", ":RustRun<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<leader>rc", ":Cargo run<CR>", { noremap = true })
 
 -- Show diagnostics float
@@ -119,3 +119,10 @@ vim.keymap.set("n", "<leader>z", function()
 	vim.fn.setreg("+", rel)
 	vim.api.nvim_echo({ { "Copied path: " .. rel, "None" } }, false, {})
 end, { desc = "Copy relative path to clipboard", silent = true })
+
+vim.keymap.set("n", "<leader>rr", ":RunCode<CR>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>rf", ":RunFile<CR>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>rft", ":RunFile tab<CR>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>rp", ":RunProject<CR>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>crf", ":CRFiletype<CR>", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>crp", ":CRProjects<CR>", { noremap = true, silent = false })
