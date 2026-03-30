@@ -88,3 +88,4 @@ git
 # AUR packages (yay handles these automatically)
 i3lock-color
 rofimoji
+protonvpn-cli-ng

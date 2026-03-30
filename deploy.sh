@@ -283,6 +283,7 @@ print_summary() {
     echo "    2. Open nvim — lazy.nvim will auto-install plugins"
     echo "    3. Set your git identity: git config --global user.name/email"
     echo "    4. Generate SSH keys if needed: ssh-keygen -t ed25519"
+    echo "    5. Configure VPN: protonvpn-cli login <username>"
     echo
     echo "  Your previous configs were backed up (if any existed)."
     echo
