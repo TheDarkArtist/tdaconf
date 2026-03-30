@@ -1,0 +1,54 @@
+# tdaconf — Arch Linux packages
+# All official repos, no AUR
+
+# Xorg
+xorg-server
+xorg-xinit
+xorg-xrandr
+xorg-xset
+
+# Window manager + rice
+i3-wm
+i3status
+polybar
+picom
+rofi
+feh
+dunst
+xss-lock
+
+# Terminals
+alacritty
+
+# Shell
+zsh
+zsh-completions
+
+# Editor
+neovim
+
+# Fonts
+ttf-jetbrains-mono-nerd
+
+# File manager
+ranger
+
+# Utilities
+lsd
+tmux
+flameshot
+xclip
+xdg-utils
+
+# Appearance
+lxappearance
+gtk-engine-murrine
+
+# Audio
+pipewire
+pipewire-pulse
+wireplumber
+
+# Dev tools
+base-devel
+git
