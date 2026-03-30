@@ -51,9 +51,14 @@ fastfetch
 rsync
 pulsemixer
 
-# Network
+# Network + VPN
 networkmanager
 network-manager-applet
+openvpn
+networkmanager-openvpn
+iptables
+openvpn
+networkmanager-openvpn
 
 # Icons + theme (Firefox/Thunar need GTK theme to not look broken)
 papirus-icon-theme

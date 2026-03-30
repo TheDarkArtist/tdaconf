@@ -252,6 +252,25 @@ fix_permissions() {
     done
 }
 
+# Install VPN leak protection (NM dispatcher script)
+install_vpn_leakguard() {
+    header "Installing VPN leak guard"
+
+    local src="$SCRIPT_DIR/system/99-vpn-leakguard"
+    local dest="/etc/NetworkManager/dispatcher.d/99-vpn-leakguard"
+
+    if [[ ! -f "$src" ]]; then
+        warn "vpn-leakguard script not found — skipping"
+        return 0
+    fi
+
+    $SUDO cp "$src" "$dest"
+    $SUDO chmod 755 "$dest"
+    $SUDO chown root:root "$dest"
+
+    success "VPN leak guard installed (DNS + IPv6 + kill switch)"
+}
+
 # Enable essential services
 enable_services() {
     header "Enabling services"
@@ -283,7 +302,8 @@ print_summary() {
     echo "    2. Open nvim — lazy.nvim will auto-install plugins"
     echo "    3. Set your git identity: git config --global user.name/email"
     echo "    4. Generate SSH keys if needed: ssh-keygen -t ed25519"
-    echo "    5. Configure VPN: protonvpn-cli login <username>"
+    echo "    5. Set up VPN: /tmp/tdaconf/vpn-setup.sh <ovpn-user> <ovpn-pass>"
+    echo "       (get OpenVPN creds from https://account.protonvpn.com/account#openvpn)"
     echo
     echo "  Your previous configs were backed up (if any existed)."
     echo
@@ -303,6 +323,7 @@ main() {
     expand_placeholders
     set_default_shell
     fix_permissions
+    install_vpn_leakguard
     enable_services
     print_summary
 }
