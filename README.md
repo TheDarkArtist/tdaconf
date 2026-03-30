@@ -1,7 +1,26 @@
-### This is supposed be a gloal config files automated copy sciprt for base < my arch-i3 setup>
+# tdaconf
 
-so idea is to just run the script and do a bunch of mannual labor that i want to avoid doing
+System bootstrapper for Arch Linux. One command to deploy a full i3 rice on a fresh install.
 
-It will contain all my configs for arch-i3, which will include every mannual thing that i had to do like alacritty.toml, nvim, tmux, i3, polybar, polkit etc...
+## Usage
 
-I'm going to create a list of all the thing it does contain
+**On a new machine:**
+```bash
+sudo pacman -S git
+git clone https://github.com/TheDarkArtist/tdaconf.git /tmp/tdaconf
+sudo /tmp/tdaconf/deploy.sh
+startx
+```
+
+**To update configs from source machine:**
+```bash
+./capture.sh
+```
+
+## What it deploys
+
+- i3 + polybar + picom + rofi + alacritty + dunst
+- Zsh + powerlevel10k + tmux
+- Neovim with lazy.nvim + LSP + treesitter
+- Polybar scripts, wallpapers, utility scripts
+- NetworkManager, flameshot, ranger, thunar, firefox, chromium
