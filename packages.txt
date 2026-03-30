@@ -81,7 +81,6 @@ chromium
 base-devel
 git
 
-# --- AUR packages (install manually with yay/paru) ---
-# i3lock-color          # blur-lock script needs this (standard i3lock won't work)
-# rofimoji              # emoji picker (mod+period keybind)
-# brave-bin             # brave browser (mod+3 keybind)
+# AUR packages (yay handles these automatically)
+i3lock-color
+rofimoji

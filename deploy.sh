@@ -57,6 +57,41 @@ check_sudo() {
     fi
 }
 
+# Install yay (AUR helper)
+install_yay() {
+    header "Installing yay"
+
+    if command -v yay &>/dev/null; then
+        info "yay already installed"
+        return 0
+    fi
+
+    info "building yay from AUR..."
+    local yay_dir="/tmp/yay-install"
+    rm -rf "$yay_dir"
+
+    # makepkg can't run as root — must run as the actual user
+    if [[ $EUID -eq 0 ]]; then
+        sudo -u "$REAL_USER" bash -c "
+            git clone https://aur.archlinux.org/yay.git '$yay_dir' &&
+            cd '$yay_dir' &&
+            makepkg -si --noconfirm
+        "
+    else
+        git clone https://aur.archlinux.org/yay.git "$yay_dir"
+        cd "$yay_dir" && makepkg -si --noconfirm
+        cd "$SCRIPT_DIR"
+    fi
+
+    rm -rf "$yay_dir"
+
+    if command -v yay &>/dev/null; then
+        success "yay installed"
+    else
+        warn "yay installation failed — AUR packages will be skipped"
+    fi
+}
+
 # Install packages from packages.txt
 install_packages() {
     header "Installing packages"
@@ -71,7 +106,21 @@ install_packages() {
     done < "$PKG_FILE"
 
     info "installing ${#packages[@]} packages..."
-    $SUDO pacman -S --needed --noconfirm "${packages[@]}"
+
+    if command -v yay &>/dev/null; then
+        # yay handles both official repos and AUR
+        # Must run as normal user, not root
+        if [[ $EUID -eq 0 ]]; then
+            sudo -u "$REAL_USER" yay -S --needed --noconfirm "${packages[@]}"
+        else
+            yay -S --needed --noconfirm "${packages[@]}"
+        fi
+    else
+        # Fallback to pacman (AUR packages will fail, that's fine)
+        $SUDO pacman -S --needed --noconfirm "${packages[@]}" || {
+            warn "some packages failed — AUR packages need yay"
+        }
+    fi
 
     success "packages installed"
 }
@@ -239,6 +288,7 @@ main() {
 
     check_arch
     check_sudo
+    install_yay
     install_packages
     install_p10k
     deploy_configs
