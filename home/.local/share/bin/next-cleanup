@@ -1,0 +1,53 @@
+#!/bin/bash
+set -euo pipefail
+
+LAYOUT_FILE="src/app/layout.tsx"
+FONTS_FILE="src/lib/fonts.ts"
+
+# clear out junk in the public directory
+rm -rf public/*
+
+# clear out that junk next.js favicon
+rm -f src/app/favicon.ico
+
+# Add tdalogo
+cp -r ~/Pictures/tda/v3/favicon.ico src/app/
+
+# clear out readme file
+echo "" >README.md
+
+mkdir -p src/lib
+mkdir -p src/styles
+
+# move globals.css
+if [ -f src/app/globals.css ]; then
+  mv src/app/globals.css src/styles/
+fi
+
+# extract font imports + const blocks into fonts.ts
+# only if fonts.ts is empty (idempotent)
+if [ ! -s "$FONTS_FILE" ]; then
+  {
+    # font imports
+    grep 'from "next/font/google"' "$LAYOUT_FILE"
+    echo
+    # geistSans block
+    sed -n '/const geistSans =/,/});/p' "$LAYOUT_FILE" | sed 's/^const /export const /'
+    echo
+    # geistMono block
+    sed -n '/const geistMono =/,/});/p' "$LAYOUT_FILE" | sed 's/^const /export const /'
+  } >"$FONTS_FILE"
+fi
+
+# remove font import and const blocks from layout.tsx
+sed -i '/from "next\/font\/google"/d' "$LAYOUT_FILE"
+sed -i '/const geistSans =/,/});/d' "$LAYOUT_FILE"
+sed -i '/const geistMono =/,/});/d' "$LAYOUT_FILE"
+
+# insert fonts import if not present
+if ! grep -q '@/lib/fonts' "$LAYOUT_FILE"; then
+  sed -i '/import type { Metadata } from "next";/a import { geistSans, geistMono } from "@/lib/fonts";' "$LAYOUT_FILE"
+fi
+
+# fix globals.css import
+sed -i 's#\./globals.css#@/styles/globals.css#' "$LAYOUT_FILE"

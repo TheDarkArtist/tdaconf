@@ -5,7 +5,14 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# if command -v tmux >/dev/null 2>&1; then
+#   [ -z "$TMUX" ] && [ -z "$NO_TMUX" ] && exec tmux
+# fi
+
 # Load colours and then set fallback prompt
+# Prompt preview:
+# [user@hostname]-[~]
+# >>>
 autoload -U colors && colors
 PS1="%{$fg[blue]%}%B[%b%{$fg[cyan]%}%n%{$fg[grey]%}%B@%b%{$fg[cyan]%}%m%{$fg[blue]%}%B]-%b%{$fg[blue]%}%B[%b%{$fg[white]%}%~%{$fg[blue]%}%B]%b
 %{$fg[cyan]%}%B>>>%b%{$reset_color%} "
@@ -22,6 +29,9 @@ zmodload zsh/complist
 zstyle ':completion:*' format '>>> %d'
 compinit
 _comp_options+=(globdots) # hidden files are included
+
+
+# precmd(){ pw-play ~/.local/share/sounds/beep.wav}
 
 # Keybindings section
 bindkey -e
@@ -52,8 +62,7 @@ bindkey '^[[Z' undo                                             # Shift+tab undo
 
 export LD_PRELOAD=""
 export EDITOR="nvim"
-export TERMINAL=alacritty
-export PATH="$HOME/.local/share/bin:$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH"
+export PATH="$HOME/Development/flutter/bin:/usr/lib/ccache/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:/usr/bin/core_perl:/usr/games/bin:$HOME/.cargo/bin/:$HOME/Development/go/bin/:$HOME/.config/composer/vendor/bin/:$HOME/.local/share/bin:$HOME/.local/bin:$PATH"
 
 if [ -f ~/.zsh_aliases ]; then
   source ~/.zsh_aliases
@@ -67,3 +76,47 @@ source /usr/share/powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# bun completions
+[ -s "__HOME__/.bun/_bun" ] && source "__HOME__/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+
+export TERMINAL=alacritty
+export ANDROID_HOME="$HOME/Development/Android/Sdk"
+# export NDK_HOME="$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)"
+export GOPATH=$HOME/Development/go
+export PATH="__HOME__/.bun/bin:$PATH"
+export CAPACITOR_ANDROID_STUDIO_PATH="/sbin/android-studio"
+export CHROME_EXECUTABLE='/sbin/chromium'
+
+# pnpm
+export PNPM_HOME="__HOME__/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# source __HOME__/.config/broot/launcher/bash/br
+
+
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# opencode
+export PATH=__HOME__/.opencode/bin:$PATH
+
+# OpenClaw Completion
+[[ -f "__HOME__/.openclaw/completions/openclaw.zsh" ]] && source "__HOME__/.openclaw/completions/openclaw.zsh"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '__HOME__/Development/google-cloud-sdk/path.zsh.inc' ]; then . '__HOME__/Development/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '__HOME__/Development/google-cloud-sdk/completion.zsh.inc' ]; then . '__HOME__/Development/google-cloud-sdk/completion.zsh.inc'; fi
+
