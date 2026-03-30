@@ -27,10 +27,11 @@ zsh-completions
 # Editor
 neovim
 
-# Fonts (polybar uses Arimo + FiraCode)
+# Fonts (exact fonts used in configs)
 ttf-jetbrains-mono-nerd
 ttf-firacode-nerd
 ttf-arimo-nerd
+ttf-hack-nerd
 ttf-nerd-fonts-symbols
 
 # File manager
