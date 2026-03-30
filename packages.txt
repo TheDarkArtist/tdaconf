@@ -11,7 +11,6 @@ xorg-xset
 i3-wm
 i3status
 polybar
-picom
 rofi
 feh
 dunst
