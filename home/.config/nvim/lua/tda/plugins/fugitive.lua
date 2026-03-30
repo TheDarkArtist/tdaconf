@@ -3,7 +3,7 @@ local ok, _ = pcall(require, "fugitive")
 if ok then
   vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
 
-  local tda = vim.api.nvim_create_augroup("TheDarkArtistGroup", {})
+  local tda = vim.api.nvim_create_augroup("CustomGroupGroup", {})
 
   local autocmd = vim.api.nvim_create_autocmd
   autocmd("BufWinEnter", {

@@ -30,12 +30,12 @@ sudo pacman -S --noconfirm networkmanager systemd
 echo "[+] Network packages reinstalled."
 
 # Ensure NetworkManager uses its internal DHCP client
-sudo nmcli connection modify enp42s0 ipv4.dhcp-client-id ""
+sudo nmcli connection modify "$(ip -o link show | awk -F: 'NR==2{print $2}' | tr -d " ")" ipv4.dhcp-client-id ""
 echo "[+] Forced NetworkManager internal DHCP client."
 
 # Reload network interfaces
-sudo ip link set enp42s0 down
-sudo ip link set enp42s0 up
+sudo ip link set "$(ip -o link show | awk -F: 'NR==2{print $2}' | tr -d " ")" down
+sudo ip link set "$(ip -o link show | awk -F: 'NR==2{print $2}' | tr -d " ")" up
 echo "[+] Network interfaces reloaded."
 
 # Restart and enable NetworkManager

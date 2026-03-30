@@ -74,7 +74,7 @@ textbox-prompt-colon {
 textbox-prompt {
     enabled:                     true;
     expand:                      false;
-    str:                         "TheDarkArtist";
+    str:                         "";
     padding:                     10px 14px;
     border-radius:               4px;
     background-color:            @active;

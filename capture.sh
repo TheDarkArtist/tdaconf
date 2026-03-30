@@ -117,6 +117,21 @@ sanitize() {
             modified=true
         fi
 
+        # 5. Strip handle/pseudonym references
+        if grep -q 'TheDarkArtist' "$file" 2>/dev/null; then
+            sed -i 's/TheDarkArtistGroup/CustomAuGroup/g; s/TheDarkArtist/CustomGroup/g' "$file"
+            modified=true
+        fi
+        if grep -q '"TDA"' "$file" 2>/dev/null; then
+            sed -i 's/content="TDA"/content=""/g' "$file"
+            modified=true
+        fi
+        # Strip author lines with handle
+        if grep -q '# Author: TheDarkArtist\|by TheDarkArtist' "$file" 2>/dev/null; then
+            sed -i 's/# Author: TheDarkArtist.*/# System utility/; s/by TheDarkArtist//' "$file"
+            modified=true
+        fi
+
         $modified && info "  sanitized: ${file#$REPO_DIR/}"
     done < <(find "$HOME_DIR" -type f -print0)
 
@@ -152,6 +167,13 @@ verify() {
     if grep -rE '(BW_SESSION|FIGMA_ACCESS_TOKEN|figd_)' "$HOME_DIR" -l 2>/dev/null | head -5 | grep -q .; then
         error "LEAK: tokens found in:"
         grep -rE '(BW_SESSION|FIGMA_ACCESS_TOKEN|figd_)' "$HOME_DIR" -l 2>/dev/null | head -10
+        leaked=true
+    fi
+
+    # Check for handle/pseudonym (excluding lua module paths and polybar color refs)
+    if grep -r "TheDarkArtist" "$HOME_DIR" -l 2>/dev/null | head -5 | grep -q .; then
+        error "LEAK: handle 'TheDarkArtist' found in:"
+        grep -r "TheDarkArtist" "$HOME_DIR" -l 2>/dev/null | head -10
         leaked=true
     fi
 

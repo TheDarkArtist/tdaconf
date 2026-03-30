@@ -11,7 +11,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- Trim trailing whitespace on save
-local tda_group = augroup("TheDarkArtist", {})
+local tda_group = augroup("CustomGroup", {})
 vim.api.nvim_create_autocmd("BufWritePre", {
 	group = tda_group,
 	pattern = "*",
