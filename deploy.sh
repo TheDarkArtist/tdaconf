@@ -255,8 +255,15 @@ fix_permissions() {
 # Enable essential services
 enable_services() {
     header "Enabling services"
+
+    # System services
     $SUDO systemctl enable --now NetworkManager 2>/dev/null || true
     info "NetworkManager enabled"
+
+    # Pipewire user services (need user lingering for --user without active session)
+    $SUDO loginctl enable-linger "$REAL_USER" 2>/dev/null || true
+    sudo -u "$REAL_USER" systemctl --user enable pipewire pipewire-pulse wireplumber 2>/dev/null || true
+    info "pipewire user services enabled"
 }
 
 # Print summary

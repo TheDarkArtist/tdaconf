@@ -75,27 +75,20 @@ default_floating_border pixel 1
 # Startup Applications
 ###################
 # System
-exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id xset +dpms
-exec --no-startup-id blueman-applet
-# exec --no-startup-id dunst
-# exec --no-startup-id clipmenud
+exec --no-startup-id dunst
 exec --no-startup-id lxpolkit
+exec --no-startup-id blueman-applet
 exec --no-startup-id nm-applet
 exec --no-startup-id python3 ~/.local/share/scripts/protonvpn-tray.py
-# exec --no-startup-id simplescreenrecorder --start-hidden
-# exec --no-startup-id aw-qt --no-gui
 
-# for some reason it is not required it just runs automatically
-exec --no-startup-id pasystray
-
-exec --no-startup-id xrandr --output HDMI-0 --primary --scale 1.35x1.35 --mode 1920x1080 --rate 60
-
-
-# Pipewire starts via systemd user services on Arch
+# Audio — start pipewire then tray (pasystray needs a running server)
+exec --no-startup-id pipewire
+exec --no-startup-id wireplumber
+exec --no-startup-id pipewire-pulse
+exec --no-startup-id sleep 2 && pasystray --notify=all
 
 # XFCE Utilities
-exec --no-startup-id /usr/lib/xfce4/notifyd/xfce4-notifyd &
 exec --no-startup-id xfce4-clipman
 
 
