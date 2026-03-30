@@ -77,24 +77,13 @@ default_floating_border pixel 1
 # System
 exec --no-startup-id xset +dpms
 exec --no-startup-id dunst
-exec --no-startup-id lxpolkit
-exec --no-startup-id blueman-applet
 exec --no-startup-id nm-applet
 exec --no-startup-id python3 ~/.local/share/scripts/protonvpn-tray.py
 
-# Audio — start pipewire then tray (pasystray needs a running server)
+# Audio
 exec --no-startup-id pipewire
 exec --no-startup-id wireplumber
 exec --no-startup-id pipewire-pulse
-exec --no-startup-id sleep 2 && pasystray --notify=all
-
-# XFCE Utilities
-exec --no-startup-id xfce4-clipman
-
-
-# exec_always --no-startup-id pkill picom; sleep 1; picom --experimental-backends --config ~/.config/picom/picom.conf
-# bindsym $mod+Shift+t exec --no-startup-id "transset-df -a --min 0.6 --dec 0.1"
-# bindsym $mod+t exec --no-startup-id "transset-df -a --min 0.6 --inc 0.1"
 
 # Aesthetics
 exec --no-startup-id feh --bg-scale __HOME__/.local/share/wallpapers/122.png
@@ -111,9 +100,6 @@ bindsym XF86AudioLowerVolume exec --no-startup-id wpctl set-volume @DEFAULT_AUDI
 bindsym XF86AudioMute exec --no-startup-id wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && $refresh_i3status
 bindsym XF86AudioPlay exec playerctl play
-bindsym XF86AudioPause exec playerctl pause
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioPrev exec playerctl previous
 
 ###################
 # Window Management
@@ -124,16 +110,8 @@ tiling_drag modifier titlebar
 
 
 # Window Rules
-for_window [class="pavucontrol"] floating enable
 for_window [class="nm-connection-editor"] floating enable
 for_window [class="feh"] floating enable
-for_window [class="Blueman-manager"] floating enable
-for_window [class="Bitwarden"] floating enable
-# for_window [class="xfce4-panel"] floating enable
-for_window [class="Gpick"] floating enable
-for_window [class="Device Manager"] floating enable
-for_window [class="Emulator"] floating enable
-for_window [class="SimpleScreenRecorder"] floating enable
 for_window [class="Protonvpn-app"] floating enable
 
 # Window Navigation
@@ -214,8 +192,7 @@ bindsym $mod+3 exec brave-browser-stable
 bindsym $mod+4 exec chromium
 bindsym $alt+q kill
 bindsym $mod+Ctrl+Escape xkill
-bindsym $mod+p exec --no-startup-id pavucontrol
-bindsym $mod+c exec ~/.local/share/scripts/bluetooth
+bindsym $mod+p exec --no-startup-id alacritty -e pulsemixer
 bindsym Print exec ~/.local/share/scripts/screenshot
 bindsym $mod+s exec flameshot screen
 bindsym $mod+Shift+s exec flameshot gui
@@ -240,8 +217,6 @@ bindsym $alt+Shift+r restart
 # Lock Screen
 set $Locker ~/.local/share/scripts/blur-lock
 bindsym $mod+l exec --no-startup-id $Locker
-# Pick color and copy to clipboard
-bindsym $mod+Shift+p exec gpick -p -o
 
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown, (b) off-screen
 

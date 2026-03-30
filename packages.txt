@@ -1,5 +1,4 @@
 # tdaconf — Arch Linux packages
-# Official repos only. AUR packages listed at bottom as comments.
 
 # Xorg
 xorg-server
@@ -15,7 +14,6 @@ rofi
 feh
 dunst
 xss-lock
-dex
 
 # Terminal
 alacritty
@@ -44,26 +42,16 @@ tmux
 flameshot
 xclip
 xdg-utils
-playerctl
 imagemagick
-gpick
 fastfetch
 rsync
+pulsemixer
 
-# Desktop environment utilities
-network-manager-applet
+# Network
 networkmanager
-blueman
-pasystray
-pavucontrol
-xfce4-notifyd
-xfce4-clipman-plugin
-xfce4-power-manager
-lxsession
+network-manager-applet
 
-# Appearance + icons
-lxappearance
-gtk-engine-murrine
+# Icons + theme (Firefox/Thunar need GTK theme to not look broken)
 papirus-icon-theme
 materia-gtk-theme
 
@@ -72,7 +60,7 @@ pipewire
 pipewire-pulse
 wireplumber
 
-# Python + GTK bindings (protonvpn tray needs ayatana appindicator)
+# Python + appindicator (protonvpn tray)
 python
 python-gobject
 libayatana-appindicator
@@ -85,7 +73,7 @@ chromium
 base-devel
 git
 
-# AUR packages (yay handles these automatically)
+# AUR
 i3lock-color
 rofimoji
 protonvpn-cli
