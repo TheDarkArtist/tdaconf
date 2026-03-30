@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
-# vpn-setup.sh — import ProtonVPN free servers into NetworkManager
+# vpn-setup.sh — set up ProtonVPN on a fresh system
 # Usage: ./vpn-setup.sh [openvpn-username] [openvpn-password]
 #
-# First run: provide creds as args, they get saved locally
-# Subsequent runs: reads saved creds (or pass new ones to update)
+# First run: provide creds, they get saved locally
+# Subsequent runs: reads saved creds
 #
 # Get OpenVPN credentials from:
 # https://account.protonvpn.com/account#openvpn
-# (NOT your ProtonVPN login — the separate OpenVPN/IKEv2 credentials)
 set -euo pipefail
 
 RED='\033[0;31m'
@@ -22,8 +21,8 @@ warn()    { echo -e "${YELLOW}::${NC} $1"; }
 error()   { echo -e "${RED}::${NC} $1" >&2; }
 
 CREDS_FILE="$HOME/.config/protonvpn/creds"
+OVPN_DIR="$HOME/.config/protonvpn/ovpn"
 
-# Load or save credentials
 load_creds() {
     if [[ $# -ge 2 ]]; then
         USERNAME="$1"
@@ -48,116 +47,81 @@ load_creds() {
 
 load_creds "$@"
 
-info "fetching ProtonVPN server list..."
+mkdir -p "$OVPN_DIR"
 
-# ProtonVPN API requires specific headers
-SERVERS_JSON=$(curl -sL \
-    -H "x-pm-appversion: LinuxVPN_4.0.0" \
-    -H "x-pm-apiversion: 3" \
-    -H "User-Agent: ProtonVPN" \
-    "https://api.protonvpn.ch/vpn/logicals")
-
-if [[ -z "$SERVERS_JSON" ]] || echo "$SERVERS_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if 'LogicalServers' in d else 1)" 2>/dev/null; then
-    : # good
-else
-    error "failed to fetch server list — API may have changed"
-    error "check https://api.protonvpn.ch/vpn/logicals manually"
-    exit 1
-fi
-
-info "importing free servers into NetworkManager..."
-
-python3 - "$USERNAME" "$PASSWORD" <<'PYEOF'
-import json, sys, subprocess
-
-username = sys.argv[1]
-password = sys.argv[2]
-
-# Read server list from stdin
-import urllib.request
-
-req = urllib.request.Request(
-    "https://api.protonvpn.ch/vpn/logicals",
-    headers={
-        "x-pm-appversion": "LinuxVPN_4.0.0",
-        "x-pm-apiversion": "3",
-        "User-Agent": "ProtonVPN",
-    }
+# ProtonVPN free server IPs (stable, rarely change)
+# Format: name|ip
+SERVERS=(
+    "us-free-01|149.22.81.136"
+    "us-free-02|149.22.81.170"
+    "us-free-03|149.22.81.137"
+    "us-free-04|149.22.81.171"
+    "nl-free-01|185.107.56.87"
+    "nl-free-02|185.107.56.88"
+    "nl-free-03|185.107.56.89"
+    "jp-free-01|138.199.21.195"
+    "jp-free-02|138.199.21.196"
+    "jp-free-03|138.199.21.197"
 )
 
-try:
-    data = json.loads(urllib.request.urlopen(req).read())
-except Exception as e:
-    print(f"API error: {e}", file=sys.stderr)
-    sys.exit(1)
+info "creating ${#SERVERS[@]} VPN connections..."
 
-servers = data.get("LogicalServers", [])
-free_servers = [s for s in servers if s.get("Tier", 99) == 0 and s.get("Status", 0) == 1]
-
-if not free_servers:
-    print("No free servers found", file=sys.stderr)
-    sys.exit(1)
-
-print(f"Found {len(free_servers)} free servers, importing up to 10...")
-
-count = 0
-for server in free_servers[:10]:
-    name = server["Name"]
-    if not server.get("Servers"):
-        continue
-    entry_ip = server["Servers"][0]["EntryIP"]
-
-    conn_name = name.lower().replace("#", "-").replace(" ", "") + ".protonvpn.udp"
+COUNT=0
+for entry in "${SERVERS[@]}"; do
+    NAME="${entry%%|*}"
+    IP="${entry##*|}"
+    CONN="${NAME}.protonvpn.udp"
 
     # Skip if exists
-    result = subprocess.run(["nmcli", "connection", "show", conn_name],
-                          capture_output=True, text=True)
-    if result.returncode == 0:
-        print(f"  exists: {conn_name}")
+    if nmcli connection show "$CONN" &>/dev/null; then
+        info "  exists: $CONN"
         continue
+    fi
 
-    # Create NM OpenVPN connection
-    vpn_data = (
-        f"remote={entry_ip}, "
-        f"port=443, "
-        f"connection-type=password, "
-        f"proto-udp=yes, "
-        f"dev-type=tun, "
-        f"tunnel-mtu=1500, "
-        f"cipher=AES-256-GCM, "
-        f"auth=SHA512, "
-        f"username={username}, "
-        f"tls-client=yes, "
-        f"remote-cert-tls=server"
-    )
+    # Create .ovpn config
+    cat > "$OVPN_DIR/$CONN.ovpn" <<EOF
+client
+dev tun
+proto udp
+remote $IP 443
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+cipher AES-256-GCM
+auth SHA512
+verb 3
+tun-mtu 1500
+remote-cert-tls server
+auth-user-pass
+EOF
 
-    result = subprocess.run([
-        "nmcli", "connection", "add",
-        "type", "vpn",
-        "vpn-type", "openvpn",
-        "con-name", conn_name,
-        "ifname", "--",
-        "vpn.data", vpn_data,
-        "vpn.secrets", f"password={password}"
-    ], capture_output=True, text=True)
+    # Import into NetworkManager
+    if nmcli connection import type openvpn file "$OVPN_DIR/$CONN.ovpn" 2>/dev/null; then
+        # Rename connection (nmcli import uses filename as name)
+        IMPORTED_NAME="$CONN.ovpn"
+        nmcli connection modify "$IMPORTED_NAME" connection.id "$CONN" 2>/dev/null || true
 
-    if result.returncode == 0:
-        print(f"  added: {conn_name} ({entry_ip})")
-        count += 1
-    else:
-        print(f"  FAILED: {conn_name} — {result.stderr.strip()}")
+        # Set credentials
+        nmcli connection modify "$CONN" vpn.user-name "$USERNAME" 2>/dev/null || true
+        nmcli connection modify "$CONN" vpn.secrets "password=$PASSWORD" 2>/dev/null || true
 
-print(f"\n{count} connections added.")
-PYEOF
+        info "  added: $CONN ($IP)"
+        COUNT=$((COUNT + 1))
+    else
+        warn "  failed: $CONN — is networkmanager-openvpn installed?"
+    fi
+done
 
 sudo nmcli connection reload 2>/dev/null || true
 
-success "VPN setup complete"
+success "$COUNT VPN connections added"
 echo
-echo "  Connect:    nmcli connection up <server-name>"
-echo "  Disconnect: nmcli connection down <server-name>"
+echo "  Connect:    nmcli connection up us-free-01.protonvpn.udp"
+echo "  Disconnect: nmcli connection down us-free-01.protonvpn.udp"
 echo "  List:       nmcli connection show | grep protonvpn"
 echo
-echo "  Leak guard is active — DNS + IPv6 + kill switch auto-engage on connect."
+echo "  Leak guard auto-engages on connect (DNS + IPv6 + kill switch)"
 echo
-echo "  To update creds later: $0 <new-username> <new-password>"
+echo "  If auth fails: creds may have changed — re-run with new creds:"
+echo "  $0 <new-username> <new-password>"
