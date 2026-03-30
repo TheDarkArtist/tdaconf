@@ -63,7 +63,7 @@ lxsession
 
 # Appearance + icons
 lxappearance
-gtk-murrine-engine
+gtk-engine-murrine
 papirus-icon-theme
 materia-gtk-theme
 
@@ -88,4 +88,4 @@ git
 # AUR packages (yay handles these automatically)
 i3lock-color
 rofimoji
-protonvpn-cli-ng
+protonvpn-cli
