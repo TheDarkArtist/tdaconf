@@ -63,7 +63,7 @@ lxsession
 
 # Appearance
 lxappearance
-gtk-engine-murrine
+gtk-murrine-engine
 
 # Audio
 pipewire
