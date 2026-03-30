@@ -111,9 +111,9 @@ install_packages() {
         # yay handles both official repos and AUR
         # Must run as normal user, not root
         if [[ $EUID -eq 0 ]]; then
-            sudo -u "$REAL_USER" yay -S --needed --noconfirm "${packages[@]}"
+            sudo -u "$REAL_USER" yay -S --needed --noconfirm --answerdiff None --answerclean None --removemake --ask 4 "${packages[@]}"
         else
-            yay -S --needed --noconfirm "${packages[@]}"
+            yay -S --needed --noconfirm --answerdiff None --answerclean None --removemake --ask 4 "${packages[@]}"
         fi
     else
         # Fallback to pacman (AUR packages will fail, that's fine)
