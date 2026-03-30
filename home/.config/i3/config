@@ -75,6 +75,7 @@ default_floating_border pixel 1
 # Startup Applications
 ###################
 # System
+exec --no-startup-id xrandr --output Virtual-1 --mode 1920x1080
 exec --no-startup-id xset +dpms
 exec --no-startup-id dunst
 exec --no-startup-id spice-vdagent
