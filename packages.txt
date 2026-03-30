@@ -6,6 +6,10 @@ xorg-xinit
 xorg-xrandr
 xorg-xset
 
+# VM display (auto-resize guest to virt-manager window)
+spice-vdagent
+xf86-video-qxl
+
 # Window manager + rice
 i3-wm
 i3status
