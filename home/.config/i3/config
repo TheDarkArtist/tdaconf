@@ -92,16 +92,11 @@ exec --no-startup-id pasystray
 exec --no-startup-id xrandr --output HDMI-0 --primary --scale 1.35x1.35 --mode 1920x1080 --rate 60
 
 
-exec --no-startup-id pipewire
-exec --no-startup-id wireplumber
-exec --no-startup-id pipewire-pulse
+# Pipewire starts via systemd user services on Arch
 
 # XFCE Utilities
-# exec --no-startup-id xfsettingsd
 exec --no-startup-id /usr/lib/xfce4/notifyd/xfce4-notifyd &
 exec --no-startup-id xfce4-clipman
-exec --no-startup-id xfce4-power-manager --sm-client-disable --daemon
-exec --no-startup-id /usr/libexec/xfce-polkit
 
 
 # exec_always --no-startup-id pkill picom; sleep 1; picom --experimental-backends --config ~/.config/picom/picom.conf

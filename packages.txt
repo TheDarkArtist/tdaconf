@@ -61,17 +61,21 @@ xfce4-clipman-plugin
 xfce4-power-manager
 lxsession
 
-# Appearance
+# Appearance + icons
 lxappearance
 gtk-murrine-engine
+papirus-icon-theme
+materia-gtk-theme
 
 # Audio
 pipewire
 pipewire-pulse
 wireplumber
 
-# Python
+# Python + GTK bindings (protonvpn tray needs ayatana appindicator)
 python
+python-gobject
+libayatana-appindicator
 
 # Browsers
 firefox
