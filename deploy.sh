@@ -221,11 +221,6 @@ print_summary() {
     echo "    3. Set your git identity: git config --global user.name/email"
     echo "    4. Generate SSH keys if needed: ssh-keygen -t ed25519"
     echo
-    echo "  AUR packages (install with yay/paru for full experience):"
-    echo "    - i3lock-color    (lock screen with blur effect)"
-    echo "    - rofimoji        (emoji picker: mod+period)"
-    echo "    - brave-bin       (brave browser: mod+3)"
-    echo
     echo "  Your previous configs were backed up (if any existed)."
     echo
 }

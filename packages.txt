@@ -1,5 +1,5 @@
-# tdaconf — Arch Linux packages
-# Official repos only. AUR packages listed at bottom as comments.
+# tdaconf — Arch Linux packages (lab VM)
+# Minimal rice + tools for disposable lab environments
 
 # Xorg
 xorg-server
@@ -15,10 +15,8 @@ picom
 rofi
 feh
 dunst
-xss-lock
-dex
 
-# Terminals
+# Terminal
 alacritty
 
 # Shell
@@ -28,7 +26,7 @@ zsh-completions
 # Editor
 neovim
 
-# Fonts (polybar uses Arimo + FiraCode, system uses JetBrains)
+# Fonts (polybar uses Arimo + FiraCode)
 ttf-jetbrains-mono-nerd
 ttf-firacode-nerd
 ttf-arimo-nerd
@@ -41,46 +39,20 @@ ranger
 # Utilities
 lsd
 tmux
-flameshot
 xclip
 xdg-utils
-playerctl
-imagemagick
-gpick
 fastfetch
-
-# Desktop environment utilities
-network-manager-applet
-networkmanager
-blueman
-pasystray
-pavucontrol
-xfce4-notifyd
-xfce4-clipman-plugin
-xfce4-power-manager
-lxsession
-
-# Appearance
-lxappearance
-gtk-engine-murrine
-
-# Audio
-pipewire
-pipewire-pulse
-wireplumber
-
-# Python (polybar scripts)
-python
-
-# Browsers
-firefox
-
-# Dev tools
-base-devel
-git
 rsync
 
-# --- AUR packages (install manually with yay/paru) ---
-# i3lock-color          # blur-lock script needs this (standard i3lock won't work)
-# rofimoji              # emoji picker (mod+period keybind)
-# brave-bin             # brave browser (mod+3 keybind)
+# Appearance
+gtk-engine-murrine
+
+# Python
+python
+
+# Browser
+firefox
+
+# Build tools
+base-devel
+git

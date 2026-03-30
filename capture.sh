@@ -101,21 +101,43 @@ sanitize() {
             modified=true
         fi
 
-        # 3. Remove personal aliases and exports
-        if grep -qE "^alias (cdw|cdp|claude-mem)=" "$file" 2>/dev/null; then
-            sed -i -E '/^alias (cdw|cdp|claude-mem)=/d' "$file"
+        # 3. Remove personal aliases, exports, and dev ecosystem cruft
+        # These have no place on a disposable lab VM
+        if grep -qE "^alias (cdw|cdp|claude-mem|brd|trd|gpp|pm|gwen)=" "$file" 2>/dev/null; then
+            sed -i -E '/^alias (cdw|cdp|claude-mem|brd|trd|gpp|pm|gwen)=/d' "$file"
             modified=true
         fi
-        if grep -q '^export PRJ=' "$file" 2>/dev/null; then
-            sed -i '/^export PRJ=/d' "$file"
-            modified=true
-        fi
-
-        # 4. Guard unguarded source lines for optional tools
-        if grep -q '^source ".*\.openclaw' "$file" 2>/dev/null; then
-            sed -i 's|^source "\(.*\.openclaw[^"]*\)"|[[ -f "\1" ]] \&\& source "\1"|' "$file"
-            modified=true
-        fi
+        # Dev tooling exports/sources — bun, nvm, pnpm, opencode, openclaw, gcloud, flutter, android
+        local dev_patterns=(
+            'export PRJ='
+            'export BUN_INSTALL='
+            'export PNPM_HOME='
+            'export NVM_DIR='
+            'export ANDROID_HOME='
+            'export GOPATH='
+            'export CAPACITOR_'
+            'export CHROME_EXECUTABLE='
+            '\.bun/'
+            '\.openclaw/'
+            '\.opencode/'
+            'google-cloud-sdk'
+            'pnpm end'
+            '# pnpm'
+            '# bun'
+            '# opencode'
+            '# OpenClaw'
+            'flutter/bin'
+            'ccache/bin'
+            'composer/vendor'
+            'Development/go'
+            'broot/launcher'
+        )
+        for pat in "${dev_patterns[@]}"; do
+            if grep -q "$pat" "$file" 2>/dev/null; then
+                sed -i "/$pat/d" "$file"
+                modified=true
+            fi
+        done
 
         $modified && info "  sanitized: ${file#$REPO_DIR/}"
     done < <(find "$HOME_DIR" -type f -print0)
