@@ -73,8 +73,9 @@ wireplumber
 # Python
 python
 
-# Browser
+# Browsers
 firefox
+chromium
 
 # Dev tools
 base-devel

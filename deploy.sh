@@ -203,6 +203,13 @@ fix_permissions() {
     done
 }
 
+# Enable essential services
+enable_services() {
+    header "Enabling services"
+    $SUDO systemctl enable --now NetworkManager 2>/dev/null || true
+    info "NetworkManager enabled"
+}
+
 # Print summary
 print_summary() {
     echo
@@ -238,6 +245,7 @@ main() {
     expand_placeholders
     set_default_shell
     fix_permissions
+    enable_services
     print_summary
 }
 

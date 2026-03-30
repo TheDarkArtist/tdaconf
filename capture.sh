@@ -142,6 +142,13 @@ sanitize() {
         sed -i '/^\[user\]/,/^\[/{/^\[user\]/d;/^\[/!d}' "$gitconfig"
         info "  stripped [user] from .gitconfig"
     fi
+
+    # 7. Strip redshift from polybar bar (not used in deploy targets)
+    local polybar_config="$HOME_DIR/.config/polybar/config.ini"
+    if [[ -f "$polybar_config" ]] && grep -q 'redshift' "$polybar_config" 2>/dev/null; then
+        sed -i 's/ ss redshift//' "$polybar_config"
+        info "  stripped redshift from polybar bar"
+    fi
 }
 
 # Verify no identity leaked
