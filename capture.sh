@@ -101,16 +101,26 @@ sanitize() {
             modified=true
         fi
 
-        # 3. Remove personal aliases
+        # 3. Remove personal aliases and exports
         if grep -qE "^alias (cdw|cdp|claude-mem)=" "$file" 2>/dev/null; then
             sed -i -E '/^alias (cdw|cdp|claude-mem)=/d' "$file"
+            modified=true
+        fi
+        if grep -q '^export PRJ=' "$file" 2>/dev/null; then
+            sed -i '/^export PRJ=/d' "$file"
+            modified=true
+        fi
+
+        # 4. Guard unguarded source lines for optional tools
+        if grep -q '^source ".*\.openclaw' "$file" 2>/dev/null; then
+            sed -i 's|^source "\(.*\.openclaw[^"]*\)"|[[ -f "\1" ]] \&\& source "\1"|' "$file"
             modified=true
         fi
 
         $modified && info "  sanitized: ${file#$REPO_DIR/}"
     done < <(find "$HOME_DIR" -type f -print0)
 
-    # 4. Strip .gitconfig [user] block
+    # 5. Strip .gitconfig [user] block
     local gitconfig="$HOME_DIR/.gitconfig"
     if [[ -f "$gitconfig" ]]; then
         # Remove [user] section (from [user] to next section or EOF)
@@ -194,7 +204,7 @@ main() {
         if sync_source "$src"; then
             info "  synced: $src"
         else
-            ((failed++))
+            failed=$((failed + 1))
         fi
     done
 

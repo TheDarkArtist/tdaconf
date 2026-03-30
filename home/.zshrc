@@ -68,7 +68,7 @@ if [ -f ~/.zsh_aliases ]; then
   source ~/.zsh_aliases
 fi
 
-if [ -f ~/.zsh_aliases ]; then
+if [ -f ~/.zsh_functions ]; then
   source ~/.zsh_functions
 fi
 
@@ -83,8 +83,6 @@ source /usr/share/powerlevel10k/powerlevel10k.zsh-theme
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-
-export PRJ="__HOME__/Workspace/Projects/tdaweb/."
 
 export TERMINAL=alacritty
 export ANDROID_HOME="$HOME/Development/Android/Sdk"
@@ -113,7 +111,7 @@ export NVM_DIR="$HOME/.config/nvm"
 export PATH=__HOME__/.opencode/bin:$PATH
 
 # OpenClaw Completion
-source "__HOME__/.openclaw/completions/openclaw.zsh"
+[[ -f "__HOME__/.openclaw/completions/openclaw.zsh" ]] && source "__HOME__/.openclaw/completions/openclaw.zsh"
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '__HOME__/Development/google-cloud-sdk/path.zsh.inc' ]; then . '__HOME__/Development/google-cloud-sdk/path.zsh.inc'; fi

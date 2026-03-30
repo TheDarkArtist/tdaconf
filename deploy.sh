@@ -6,7 +6,16 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOME_DIR="$SCRIPT_DIR/home"
 PKG_FILE="$SCRIPT_DIR/packages.txt"
-TARGET_HOME="${TARGET_HOME:-$HOME}"
+
+# Detect actual user home even when run with sudo
+if [[ -n "${SUDO_USER:-}" ]]; then
+    REAL_USER="$SUDO_USER"
+    REAL_HOME="$(getent passwd "$SUDO_USER" | cut -d: -f6)"
+else
+    REAL_USER="$(whoami)"
+    REAL_HOME="$HOME"
+fi
+TARGET_HOME="${TARGET_HOME:-$REAL_HOME}"
 
 # Colors
 RED='\033[0;31m'
@@ -33,7 +42,11 @@ check_arch() {
 # Check sudo access
 check_sudo() {
     if [[ $EUID -eq 0 ]]; then
-        warn "running as root — configs will deploy to $TARGET_HOME"
+        if [[ -n "${SUDO_USER:-}" ]]; then
+            info "running via sudo — deploying configs to $TARGET_HOME (user: $REAL_USER)"
+        else
+            warn "running as root directly — configs will deploy to $TARGET_HOME"
+        fi
         SUDO=""
     else
         if ! sudo -v 2>/dev/null; then
@@ -63,24 +76,21 @@ install_packages() {
     success "packages installed"
 }
 
-# Install powerlevel10k (not in official repos)
+# Install powerlevel10k
+# Always git clone to /usr/share/powerlevel10k/ — the Arch pacman package
+# installs to a different path that doesn't match .zshrc's source line
 install_p10k() {
     header "Installing powerlevel10k"
 
     local p10k_dir="/usr/share/powerlevel10k"
 
     if [[ -d "$p10k_dir" ]]; then
-        info "powerlevel10k already installed"
+        info "powerlevel10k already installed at $p10k_dir"
         return 0
     fi
 
-    # Check if available via pacman first (some repos have it)
-    if pacman -Si zsh-theme-powerlevel10k &>/dev/null; then
-        $SUDO pacman -S --needed --noconfirm zsh-theme-powerlevel10k
-    else
-        info "cloning powerlevel10k..."
-        $SUDO git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir"
-    fi
+    info "cloning powerlevel10k..."
+    $SUDO git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir"
 
     success "powerlevel10k installed"
 }
@@ -121,6 +131,15 @@ deploy_configs() {
     # Deploy with rsync
     rsync -a --checksum "$HOME_DIR/" "$TARGET_HOME/"
 
+    # Fix ownership if run via sudo (rsync as root makes files root-owned)
+    if [[ -n "${SUDO_USER:-}" ]]; then
+        chown -R "$REAL_USER:$REAL_USER" "$TARGET_HOME/.config" "$TARGET_HOME/.local" \
+            "$TARGET_HOME/.zshrc" "$TARGET_HOME/.zsh_aliases" "$TARGET_HOME/.zsh_functions" \
+            "$TARGET_HOME/.profile" "$TARGET_HOME/.xprofile" "$TARGET_HOME/.xinitrc" \
+            "$TARGET_HOME/.tmux.conf" "$TARGET_HOME/.p10k.zsh" "$TARGET_HOME/.gitconfig" 2>/dev/null || true
+        info "fixed file ownership for $REAL_USER"
+    fi
+
     success "configs deployed to $TARGET_HOME"
 }
 
@@ -137,7 +156,7 @@ expand_placeholders() {
 
         if grep -q '__HOME__' "$file" 2>/dev/null; then
             sed -i "s|__HOME__|$TARGET_HOME|g" "$file"
-            ((count++))
+            count=$((count + 1))
         fi
     done < <(find "$TARGET_HOME/.config" "$TARGET_HOME/.local" \
         "$TARGET_HOME/.zshrc" "$TARGET_HOME/.zsh_aliases" \
@@ -157,13 +176,13 @@ set_default_shell() {
     local zsh_path
     zsh_path="$(which zsh 2>/dev/null || echo /usr/bin/zsh)"
 
-    if [[ "$(getent passwd "$(whoami)" | cut -d: -f7)" == "$zsh_path" ]]; then
-        info "zsh is already the default shell"
+    if [[ "$(getent passwd "$REAL_USER" | cut -d: -f7)" == "$zsh_path" ]]; then
+        info "zsh is already the default shell for $REAL_USER"
         return 0
     fi
 
-    chsh -s "$zsh_path"
-    success "default shell set to zsh"
+    chsh -s "$zsh_path" "$REAL_USER"
+    success "default shell set to zsh for $REAL_USER"
 }
 
 # Make scripts executable
@@ -201,6 +220,11 @@ print_summary() {
     echo "    2. Open nvim — lazy.nvim will auto-install plugins"
     echo "    3. Set your git identity: git config --global user.name/email"
     echo "    4. Generate SSH keys if needed: ssh-keygen -t ed25519"
+    echo
+    echo "  AUR packages (install with yay/paru for full experience):"
+    echo "    - i3lock-color    (lock screen with blur effect)"
+    echo "    - rofimoji        (emoji picker: mod+period)"
+    echo "    - brave-bin       (brave browser: mod+3)"
     echo
     echo "  Your previous configs were backed up (if any existed)."
     echo
